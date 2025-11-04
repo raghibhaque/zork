@@ -33,8 +33,11 @@ public class Room {
     }
 
     public String getLongDescription() {
-        return "You are " + description + ".\nExits: " + getExitString();
+        return "You are " + description + ".\n"
+                + getItemString() + "\n"
+                + "Exits: " + getExitString();
     }
+
     public void addItem(Item item) {
         items.put(item.getName().toLowerCase(), item);
     }

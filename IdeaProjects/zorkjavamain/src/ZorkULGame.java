@@ -60,6 +60,11 @@ public class ZorkULGame {
         lab.addItem(new Item("laptop", "a silver MacBook"));
         pub.addItem(new Item("book", "a dusty programming manual"));
 
+        // all items
+        outside.addItem(new Item("key", "a small golden key"));
+        lab.addItem(new Item("laptop", "a silver MacBook"));
+        pub.addItem(new Item("book", "a dusty programming manual"));
+
     }
 
 
@@ -127,6 +132,11 @@ public class ZorkULGame {
         parser.showCommands();
     }
 
+    public String getPlayerInventory() {
+        return player.getInventoryString();
+    }
+
+
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Go where?");
@@ -146,14 +156,10 @@ public class ZorkULGame {
     }
 
     public static void main(String[] args) {
-        ZorkULGame game = new ZorkULGame();
         ZorkGUI.launch(ZorkGUI.class, args);
-        game.play();
-
     }
 
     public String getCurrentRoomDescription() {
-        System.out.println("Current Room Description:");
         return player.getCurrentRoom().getLongDescription();
     }
     private void takeItem(Command command) {
@@ -195,5 +201,4 @@ public class ZorkULGame {
             System.out.println("You dropped the " + item.getName() + ".");
         }
     }
-
 }
