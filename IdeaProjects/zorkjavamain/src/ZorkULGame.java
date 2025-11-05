@@ -30,12 +30,13 @@ public class ZorkULGame {
         Room outside, theatre, pub, lab, office, basement;
 
         // create rooms
-        outside = new Room("outside the main entrance of the university");
+        outside = new Room("Outside the main entrance of the university \n" +
+                "The campus is silent. The windows above are dark... but you can’t shake the feeling that something is watching you.");
         theatre = new Room("in a lecture theatre");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-        basement = new Room("in the gloomy basement");
+        pub = new Room("In the campus pub");
+        lab = new Room("In a computing lab");
+        office = new Room("In the computing admin office");
+        basement = new Room("In the gloomy basement");
 
         // initialise room exits
         outside.setExit("east", theatre);
@@ -56,15 +57,16 @@ public class ZorkULGame {
         basement.setExit("north", lab);
         // create the player character and start outside
         player = new Character("player", outside);
-        outside.addItem(new Item("key", "a small golden key"));
         lab.addItem(new Item("laptop", "a silver MacBook"));
         pub.addItem(new Item("book", "a dusty programming manual"));
 
         // all items
-        outside.addItem(new Item("key", "a small golden key"));
-        lab.addItem(new Item("laptop", "a silver MacBook"));
+        office.addItem(new Item("key", "a small golden key. It has the word basement etched into it..."));
+        outside.addItem(new Item("note", "An old piece of papyrus."));
+        lab.addItem(new Item("Vial", "a cracked rusty vial, it smells a bit funny."));
         pub.addItem(new Item("book", "a dusty programming manual"));
-
+        basement.addItem(new Item("Diary", "A ragged diary, seems like someone put alot of their secrets here."));
+        office.addItem(new Item("Document", "a very important piece of paper with Edenhelm's logo on the front"));
     }
 
 
@@ -111,6 +113,9 @@ public class ZorkULGame {
             case "inventory":
                 System.out.println(player.getInventoryString());
                 break;
+            case "read":
+                readItem(command);
+                break;
             case "quit":
                 if (command.hasSecondWord()) {
                     System.out.println("Quit what?");
@@ -149,7 +154,13 @@ public class ZorkULGame {
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
-        } else {
+        }
+        if (nextRoom.getDescription().contains("basement") && player.getItem("key") == null) {
+            System.out.println("The basement door is locked tight. You need the old key.");
+            return;
+        }
+
+        else {
             player.setCurrentRoom(nextRoom);
             System.out.println(player.getCurrentRoom().getLongDescription());
         }
@@ -199,6 +210,38 @@ public class ZorkULGame {
             player.getCurrentRoom().addItem(item);
             item.setLocation(player.getCurrentRoom().getDescription());
             System.out.println("You dropped the " + item.getName() + ".");
+        }
+    }
+    private void readItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Read what?");
+            return;
+        }
+        String itemName = command.getSecondWord();
+        Item item = player.getItem(itemName);
+
+        if (item == null) {
+            System.out.println("You don't have " + itemName + " to read.");
+            return;
+        }
+        switch (itemName.toLowerCase()) {
+            case "diary":
+                System.out.println("The diary pages are torn and smudged with ink...");
+                System.out.println("\"Day 67: The machine in the lab won’t stop humming. "
+                        + "We sealed the lower gate, but it whispers still. If anyone finds this—do not stay after midnight.\"");
+                break;
+                case "document":
+                    System.out.println("The document is stamped 'Confidential — Edenhelm University.'");
+                    System.out.println("\"Effective immediately, all public references to the Helios Study... "
+                            + "The press has begun to circulate rumors. Faculty are to deny any knowledge. "
+                            + "Let us ensure its light does not draw unwanted eyes.\"");
+                    break;
+            case "note":
+                System.out.println("To whomever enters Edenhelm — the gates will not open again until dawn. Find the truth. End it.");
+                System.out.println("FIND THE KEY.");
+                break;
+            default:
+                System.out.println("There's nothing to read in that.");
         }
     }
 }

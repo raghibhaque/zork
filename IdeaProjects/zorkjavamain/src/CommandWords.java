@@ -14,8 +14,7 @@ public class CommandWords {
         validCommands.put("teleport", "Teleport to a place");
     }
 
-    public boolean isCommand(String commandWord)
-    {
+    public boolean isCommand(String commandWord) {
         return validCommands.containsKey(commandWord);
     }
 
@@ -27,3 +26,4 @@ public class CommandWords {
         System.out.println();
     }
 }
+

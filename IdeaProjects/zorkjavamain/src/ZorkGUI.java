@@ -91,7 +91,7 @@ public class ZorkGUI extends Application {
         });
 
         TextField inputField = new TextField();
-        inputField.setPromptText("Type a command (e.g. go north, take key)");
+        inputField.setPromptText("Type a command (e.g. go north, take key, 'help' to display all commands)");
         inputField.setOnAction(event -> {
             processCommand(inputField.getText());
             inputField.clear();
@@ -135,7 +135,14 @@ public class ZorkGUI extends Application {
 
         if (roomName.contains("outside")) {
             roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/outside.png")).toExternalForm()));
-        } else {
+        }
+        else if (roomName.contains("basement")) {
+            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/basement.png")).toExternalForm()));
+        }
+        else if (roomName.contains("theatre")) {
+            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/theatre.png")).toExternalForm()));
+        }
+        else {
             roomImage.setImage(null);
         }
     }
