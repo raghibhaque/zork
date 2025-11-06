@@ -10,6 +10,9 @@ public class Character {
         this.currentRoom = startingRoom;
     }
 
+    public Character() {
+    }
+
     public String getName() {
         return name;
     }

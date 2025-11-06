@@ -64,6 +64,7 @@ public class ZorkGUI extends Application {
         buttonGrid.add(dropBtn, 2, 3);   // new row
 
 
+
         root.setBottom(buttonGrid);
 
         // Add button actions
@@ -106,10 +107,28 @@ public class ZorkGUI extends Application {
 
         // Create the scene and show the stage
         Scene scene = new Scene(root, 400, 500);
-        primaryStage.setTitle("Zork University Adventure");
+        primaryStage.setTitle("Edenhelm");
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case W: // Move North
+                    processCommand("go north");
+                    break;
+                case S: // Move South
+                    processCommand("go south");
+                    break;
+                case A: // Move West
+                    processCommand("go west");
+                    break;
+                case D: // Move East
+                    processCommand("go east");
+                    break;
+                default:
+                    break;
+            }
+        });
         // Show initial game state
         displayGameState();
     }
@@ -121,6 +140,7 @@ public class ZorkGUI extends Application {
             Command cmd = new Command(words[0], words[1]);
             game.processCommand(cmd);
             displayGameState();
+            outputArea.appendText("Tip: You can also move using W (north), A (west), S (south), D (east)");
         }
     }
 
