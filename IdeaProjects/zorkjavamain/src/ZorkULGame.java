@@ -63,7 +63,9 @@ public class ZorkULGame {
 
         // create the player character and start outside
         player = new Character("player", outside);
-        npc testNpc = new npc("test", outside);
+        NPC janitor = new NPC("Janitor", outside,
+                "You shouldn’t be here after dark… not since the incident in the basement.");
+        outside.addNPC(janitor);
         lab.addItem(new Item("laptop", "a silver MacBook"));
         pub.addItem(new Item("book", "a dusty programming manual"));
 
@@ -121,6 +123,9 @@ public class ZorkULGame {
                 break;
             case "read":
                 readItem(command);
+                break;
+            case "talk":
+                talkToNPC(command);
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -204,6 +209,26 @@ public class ZorkULGame {
         }
     }
 
+    private void talkToNPC(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Talk to who?");
+            return;
+        }
+
+        String npcName = command.getSecondWord();
+        Room currentRoom = player.getCurrentRoom();
+
+        for (NPC npc : currentRoom.getNPCs()) {
+            if (npc.getName().equalsIgnoreCase(npcName)) {
+                npc.speak();
+                return;
+            }
+        }
+
+        System.out.println("There’s no one named " + npcName + " here.");
+    }
+
+
     private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
@@ -234,6 +259,9 @@ public class ZorkULGame {
             System.out.println("You don't have " + itemName + " to read.");
             return;
         }
+
+
+
         switch (itemName.toLowerCase()) {
             case "diary":
                 System.out.println("The diary pages are torn and smudged with ink...");
@@ -254,4 +282,4 @@ public class ZorkULGame {
                 System.out.println("There's nothing to read in that.");
         }
     }
-}
+} // end of class

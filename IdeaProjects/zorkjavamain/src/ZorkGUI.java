@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -53,7 +54,7 @@ public class ZorkGUI extends Application {
         Button westBtn = new Button("West");
         Button takeBtn = new Button("Take");
         Button dropBtn = new Button("Drop");
-
+        Button inventoryBtn = new Button("Inventory");
 
         // Add buttons to the grid
         buttonGrid.add(northBtn, 1, 0);  // top
@@ -97,6 +98,8 @@ public class ZorkGUI extends Application {
             processCommand(inputField.getText());
             inputField.clear();
         });
+
+
 
         VBox topBox = new VBox(0);
         topBox.setAlignment(Pos.CENTER);
@@ -166,6 +169,36 @@ public class ZorkGUI extends Application {
             roomImage.setImage(null);
         }
     }
+    private Stage inventoryStage; // Separate window
+    private boolean inventoryOpen = false; // Toggle tracker
+
+    // 🔹 Toggle the inventory window on/off
+    private void toggleInventoryWindow() {
+        if (inventoryOpen && inventoryStage != null) {
+            inventoryStage.close();
+            inventoryOpen = false;
+            return;
+        }
+
+        inventoryStage = new Stage();
+        inventoryStage.setTitle("Your Inventory");
+
+        TextArea invText = new TextArea(game.getPlayerInventory());
+        invText.setEditable(false);
+        invText.setWrapText(true);
+        invText.setStyle("-fx-font-size: 14px; -fx-control-inner-background: #222; -fx-text-fill: #ffffff;");
+
+        Scene invScene = new Scene(invText, 300, 200);
+        inventoryStage.setScene(invScene);
+        inventoryStage.show();
+
+        inventoryOpen = true;
+
+        // Reset flag when manually closed
+        inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
+    }
+
+
     public static void main(String[] args) {
         launch(args);
     }

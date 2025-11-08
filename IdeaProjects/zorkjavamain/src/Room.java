@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +36,10 @@ public class Room {
     public String getLongDescription() {
         return "You are " + description + ".\n"
                 + getItemString() + "\n"
+                + getNPCString() + "\n"
                 + "Exits: " + getExitString();
     }
+
 
     public void addItem(Item item) {
         items.put(item.getName().toLowerCase(), item);
@@ -49,6 +52,33 @@ public class Room {
     public Item getItem(String itemName) {
         return items.get(itemName.toLowerCase());
     }
+
+    // === NPC Support ===
+    private ArrayList<NPC> npcs = new ArrayList<>();
+
+    public void addNPC(NPC npc) {
+        npcs.add(npc);
+    }
+
+    public void removeNPC(NPC npc) {
+        npcs.remove(npc);
+    }
+
+    public ArrayList<NPC> getNPCs() {
+        return npcs;
+    }
+
+    public String getNPCString() {
+        if (npcs.isEmpty()) {
+            return "No one else is here.";
+        }
+        StringBuilder sb = new StringBuilder("You see: ");
+        for (NPC npc : npcs) {
+            sb.append(npc.getName()).append(", ");
+        }
+        return sb.substring(0, sb.length() - 2);
+    }
+
 
     public String getItemString() {
         if (items.isEmpty()) {

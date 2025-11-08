@@ -12,6 +12,7 @@ public class CommandWords {
         validCommands.put("look", "Look around");
         validCommands.put("eat", "Eat something");
         validCommands.put("teleport", "Teleport to a place");
+        validCommands.put("talk", "Speak to an NPC in the room");
     }
 
     public boolean isCommand(String commandWord) {

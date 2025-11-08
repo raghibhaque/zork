@@ -1,18 +1,25 @@
-public class npc extends Character {
-    private  String name;
+class NPC extends Character {
+    private String dialogue; // what this NPC says when interacted with
 
-    public npc(String name, Room startingRoom) {
-        super();
-        this.name = name;
+    public NPC(String name, Room startingRoom, String dialogue) {
+        super(name, startingRoom);
+        this.dialogue = dialogue;
     }
-    public String getName() {
-        return name;
+
+    public String getDialogue() {
+        return dialogue;
     }
-    public void setName(String name) {
-        this.name = name;
+
+    public void setDialogue(String dialogue) {
+        this.dialogue = dialogue;
     }
+
+    public void speak() {
+        System.out.println(getName() + " says: \"" + dialogue + "\"");
+    }
+
     @Override
     public String toString() {
-        return "npc{" + "name=" + name + '}';
+        return "NPC{name='" + getName() + "', room='" + getCurrentRoom().getDescription() + "'}";
     }
 }
