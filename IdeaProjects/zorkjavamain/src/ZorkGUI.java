@@ -13,61 +13,64 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import java.awt.event.ActionListener;
 import java.util.Objects;
 import java.util.Optional;
 
 public class ZorkGUI extends Application {
+
     private ZorkULGame game;
     private TextArea outputArea;
     private ImageView roomImage;
-
-
+    private Stage inventoryStage;
+    private boolean inventoryOpen = false;
     @Override
     public void start(Stage primaryStage) {
-        game = new ZorkULGame();
-
-        // Create the main layout
-        BorderPane root = new BorderPane();
-
-        // Create and configure the text area for game output
         outputArea = new TextArea();
         outputArea.setEditable(false);
         outputArea.setWrapText(true);
-        outputArea.setPrefRowCount(10);
-        root.setCenter(outputArea);
+
         game = new ZorkULGame(outputArea);
 
-        // Create and configure the image view for room visuals
+        BorderPane root = new BorderPane();
+        root.setCenter(outputArea);
+
         roomImage = new ImageView();
         roomImage.setFitWidth(480);
         roomImage.setFitHeight(320);
         roomImage.setPreserveRatio(true);
 
         ImageView minimapImage = new ImageView();
-        minimapImage.setFitWidth(120);
-        minimapImage.setFitHeight(120);
+        minimapImage.setFitWidth(240);
+        minimapImage.setFitHeight(240);
         minimapImage.setPreserveRatio(true);
 
         try {
-            minimapImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/minimap.png")).toExternalForm()));
+            minimapImage.setImage(new Image(Objects.requireNonNull(
+                    getClass().getResource("/images/minimap.png")).toExternalForm()
+            ));
         } catch (Exception e) {
             System.out.println("Minimap not found yet!");
         }
 
         HBox imageBar = new HBox(10);
         imageBar.setAlignment(Pos.CENTER);
-        imageBar.getChildren().addAll(minimapImage, roomImage);
         imageBar.setStyle("-fx-background-color: black;");
+        imageBar.getChildren().addAll(minimapImage, roomImage);
 
+        TextField inputField = new TextField();
+        inputField.setPromptText("Type command (e.g. go north, take torch, talk Orpheon)");
+        inputField.setOnAction(event -> {
+            processCommand(inputField.getText());
+            inputField.clear();
+        });
 
         VBox topBox = new VBox(5);
         topBox.setAlignment(Pos.CENTER);
+        topBox.setStyle("-fx-background-color: black;");
+        topBox.getChildren().addAll(inputField, imageBar);
+
         root.setTop(topBox);
 
-
-
-        // Create direction buttons in a grid
         GridPane buttonGrid = new GridPane();
         buttonGrid.setAlignment(Pos.CENTER);
         buttonGrid.setHgap(10);
@@ -77,42 +80,40 @@ public class ZorkGUI extends Application {
         Button southBtn = new Button("South");
         Button eastBtn = new Button("East");
         Button westBtn = new Button("West");
+
         Button takeBtn = new Button("Take");
         Button dropBtn = new Button("Drop");
         Button inventoryBtn = new Button("Inventory");
-        Button MinimapBtn = new Button("Minimap");
+        Button minimapBtn = new Button("Minimap");
 
-        // Add buttons to the grid
-        buttonGrid.add(northBtn, 1, 0);  // top
-        buttonGrid.add(westBtn, 0, 1);   // left
-        buttonGrid.add(eastBtn, 2, 1);   // right
-        buttonGrid.add(southBtn, 1, 2);  // bottom
-        buttonGrid.add(takeBtn, 0, 3);   // new row
-        buttonGrid.add(dropBtn, 2, 3);   // new row
+        buttonGrid.add(northBtn, 1, 0);
+        buttonGrid.add(westBtn, 0, 1);
+        buttonGrid.add(eastBtn, 2, 1);
+        buttonGrid.add(southBtn, 1, 2);
+
+        buttonGrid.add(takeBtn, 0, 3);
         buttonGrid.add(inventoryBtn, 1, 3);
-        buttonGrid.add(MinimapBtn, 1, 4);
+        buttonGrid.add(dropBtn, 2, 3);
 
-
+        buttonGrid.add(minimapBtn, 1, 4);
 
         root.setBottom(buttonGrid);
 
-        // Add button actions
         northBtn.setOnAction(e -> processCommand("go north"));
         southBtn.setOnAction(e -> processCommand("go south"));
         eastBtn.setOnAction(e -> processCommand("go east"));
         westBtn.setOnAction(e -> processCommand("go west"));
 
-
-        MinimapBtn.setOnAction(e -> roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/minimap.png")).toExternalForm())));
-        int counter = 0;
-
-
+        minimapBtn.setOnAction(e ->
+                roomImage.setImage(new Image(Objects.requireNonNull(
+                        getClass().getResource("/images/minimap.png")).toExternalForm()))
+        );
 
         takeBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Take Item");
             dialog.setHeaderText("Pick up an item");
-            dialog.setContentText("Enter the item name:");
+            dialog.setContentText("Enter item name:");
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(item -> processCommand("take " + item));
         });
@@ -121,88 +122,61 @@ public class ZorkGUI extends Application {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Drop Item");
             dialog.setHeaderText("Drop an item");
-            dialog.setContentText("Enter the item name:");
+            dialog.setContentText("Enter item name:");
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(item -> processCommand("drop " + item));
         });
 
-        TextField inputField = new TextField();
-        inputField.setPromptText("Type a command (e.g. go north, take key, 'help' to display all commands)");
-        inputField.setOnAction(event -> {
-            processCommand(inputField.getText());
-            inputField.clear();
+        inventoryBtn.setOnAction(e -> toggleInventoryWindow());
+
+        // KEYBOARD MOVEMENT
+        Scene scene = new Scene(root, 400, 500);
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case W: processCommand("go north"); break;
+                case S: processCommand("go south"); break;
+                case A: processCommand("go west"); break;
+                case D: processCommand("go east"); break;
+            }
         });
 
-
-        topBox.setAlignment(Pos.CENTER);
-        topBox.setStyle("-fx-background-color: #000000;");
-        topBox.getChildren().addAll(inputField, roomImage);
-        root.setTop(topBox);
-
-
-        // Create the scene and show the stage
-        Scene scene = new Scene(root, 400, 500);
-        primaryStage.setTitle("Flames of Promethius");
+        primaryStage.setTitle("Flames of Prometheus");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case W: // Move North
-                    processCommand("go north");
-                    break;
-                case S: // Move South
-                    processCommand("go south");
-                    break;
-                case A: // Move West
-                    processCommand("go west");
-                    break;
-                case D: // Move East
-                    processCommand("go east");
-                    break;
-                default:
-                    break;
-            }
-        });
-        // Show initial game state
         displayGameState();
     }
 
     private void processCommand(String command) {
-        // Split the command into words
-        String[] words = command.split(" ");
-        if (words.length >= 2) {
-            Command cmd = new Command(words[0], words[1]);
-            game.processCommand(cmd);
-            displayGameState();
-            outputArea.appendText("Tip: You can also move using W (north), A (west), S (south), D (east)");
+        String[] words = command.trim().split(" ");
+        Command cmd;
+
+        if (words.length == 1) {
+            cmd = new Command(words[0], null);   // single-word command
+        } else {
+            cmd = new Command(words[0], words[1]); // two-word
         }
+
+        game.processCommand(cmd);
+        displayGameState();
     }
 
     private void displayGameState() {
-        // Clear the output area and show the current room description
         outputArea.clear();
-        outputArea.appendText(game.getCurrentRoomDescription() + "\n");
+        outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
 
-        // Update room image based on current room description
+        // IMAGE SWITCHING
         String roomName = game.getCurrentRoomDescription().toLowerCase();
 
         if (roomName.contains("embers")) {
-            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()));
-        }
-        else if (roomName.contains("basement")) {
-            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/basement.png")).toExternalForm()));
-        }
-        else if (roomName.contains("theatre")) {
-            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/theatre.png")).toExternalForm()));
-        }
-        else {
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
+            ));
+        } else {
             roomImage.setImage(null);
         }
     }
-    private Stage inventoryStage; // Separate window
-    private boolean inventoryOpen = false; // Toggle tracker
 
     private void toggleInventoryWindow() {
         if (inventoryOpen && inventoryStage != null) {
@@ -217,7 +191,7 @@ public class ZorkGUI extends Application {
         TextArea invText = new TextArea(game.getPlayerInventory());
         invText.setEditable(false);
         invText.setWrapText(true);
-        invText.setStyle("-fx-font-size: 14px; -fx-control-inner-background: #222; -fx-text-fill: #ffffff;");
+        invText.setStyle("-fx-font-size: 14px; -fx-control-inner-background: #222; -fx-text-fill: #fff;");
 
         Scene invScene = new Scene(invText, 300, 200);
         inventoryStage.setScene(invScene);
@@ -227,8 +201,6 @@ public class ZorkGUI extends Application {
 
         inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
     }
-
-
 
     public static void main(String[] args) {
         launch(args);

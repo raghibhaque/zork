@@ -13,6 +13,13 @@ public class Room implements Serializable {
     private String description;
     private Map<String, Room> exits; // Map direction to neighboring Room
     private Map<String, Item> items;
+    private boolean altarIgnited = false;
+    public boolean isAltarIgnited() {
+        return altarIgnited;
+    }
+    public void igniteAltar() {
+        this.altarIgnited = true;
+    }
 
     public Room(String description) {
         this.description = description;
@@ -97,4 +104,6 @@ public class Room implements Serializable {
         // remove last comma + space
         return sb.substring(0, sb.length() - 2);
     }
+
+
 }
