@@ -1,8 +1,15 @@
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.*;
 
-public class Room {
+public class Room implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+
     private String description;
     private Map<String, Room> exits; // Map direction to neighboring Room
     private Map<String, Item> items;

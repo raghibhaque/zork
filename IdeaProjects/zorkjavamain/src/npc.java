@@ -1,8 +1,12 @@
 import javafx.scene.control.TextArea;
 
-class NPC extends Character {
-    private String dialogue; // what this NPC says when interacted with
+import java.io.Serial;
+import java.io.Serializable;
 
+class NPC extends Character implements Serializable {
+    private String dialogue; // what this NPC says when interacted with
+    @Serial
+    private static final long serialVersionUID = 1L;
     public NPC(String name, Room startingRoom, String dialogue) {
         super(name, startingRoom);
         this.dialogue = dialogue;

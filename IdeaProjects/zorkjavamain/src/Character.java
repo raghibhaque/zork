@@ -1,6 +1,8 @@
 import java.util.ArrayList;
-
-public class Character {
+import java.io.*;
+public class Character implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String name;
     private Room currentRoom;
     private ArrayList<Item> inventory = new ArrayList<>();

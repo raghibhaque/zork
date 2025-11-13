@@ -15,10 +15,14 @@ emphasizing exploration and simple command-driven gameplay
 
 import javafx.scene.control.TextArea;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.*;
 public class ZorkULGame {
     private Parser parser;
     private Character player;
     private TextArea outputArea;
+    private static final String SAVE_FILE = "savegame.ser";
 
     public ZorkULGame() {
         createRooms();
@@ -27,6 +31,8 @@ public class ZorkULGame {
     public ZorkULGame(TextArea outputArea) { // GUI version
         this.outputArea = outputArea;
         createRooms();
+        loadGameIfExists();
+
         parser = new Parser();
     }
 
@@ -65,7 +71,6 @@ public class ZorkULGame {
                 "This must be where the Keeper of Ashes once rested.");
 
 
-
         hallOfEmbers.setExit("north", chamberOfEchoes);
         chamberOfEchoes.setExit("south", hallOfEmbers);
         chamberOfEchoes.setExit("east", ironSpire);
@@ -79,8 +84,11 @@ public class ZorkULGame {
         keepersQuarters.setExit("east", crucible);
         crucible.setExit("west", keepersQuarters);
 
-
+        if (player == null) {
+            player = new Character("player", hallOfEmbers);
+        }
         player = new Character("player", hallOfEmbers);
+
 
         NPC keeper = new NPC("Keeper", keepersQuarters,
                 "He gave them the fire... and they burned the world with it.\n" +
@@ -152,6 +160,12 @@ public class ZorkULGame {
                 break;
             case "talk":
                 talkToNPC(command);
+                break;
+            case "save":
+                saveGame();
+                break;
+            case "load":
+                loadGameIfExists();
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -317,4 +331,30 @@ public class ZorkULGame {
             System.out.println(message);
         }
     }
+
+    public void saveGame() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
+            out.writeObject(player);
+            print("Game auto-saved.");
+        } catch (IOException e) {
+            print("Auto-save failed: " + e.getMessage());
+        }
+    }
+
+    public void loadGameIfExists() {
+        File f = new File(SAVE_FILE);
+        if (!f.exists()) {
+            print("No save file found. Starting new game.");
+            return;
+        }
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVE_FILE))) {
+            player = (Character) in.readObject();
+            System.out.println("Game loaded automatically.");
+            print(player.getCurrentRoom().getLongDescription());
+        } catch (Exception e) {
+            print("Failed to load save: " + e.getMessage());
+        }
+    }
+
 } // end of class
