@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.awt.event.ActionListener;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,12 +36,36 @@ public class ZorkGUI extends Application {
         outputArea.setWrapText(true);
         outputArea.setPrefRowCount(10);
         root.setCenter(outputArea);
+        game = new ZorkULGame(outputArea);
 
         // Create and configure the image view for room visuals
         roomImage = new ImageView();
-        roomImage.setFitWidth(400);
-        roomImage.setFitHeight(200);
+        roomImage.setFitWidth(480);
+        roomImage.setFitHeight(320);
         roomImage.setPreserveRatio(true);
+
+        ImageView minimapImage = new ImageView();
+        minimapImage.setFitWidth(120);
+        minimapImage.setFitHeight(120);
+        minimapImage.setPreserveRatio(true);
+
+        try {
+            minimapImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/minimap.png")).toExternalForm()));
+        } catch (Exception e) {
+            System.out.println("Minimap not found yet!");
+        }
+
+        HBox imageBar = new HBox(10);
+        imageBar.setAlignment(Pos.CENTER);
+        imageBar.getChildren().addAll(minimapImage, roomImage);
+        imageBar.setStyle("-fx-background-color: black;");
+
+
+        VBox topBox = new VBox(5);
+        topBox.setAlignment(Pos.CENTER);
+        root.setTop(topBox);
+
+
 
         // Create direction buttons in a grid
         GridPane buttonGrid = new GridPane();
@@ -55,6 +80,7 @@ public class ZorkGUI extends Application {
         Button takeBtn = new Button("Take");
         Button dropBtn = new Button("Drop");
         Button inventoryBtn = new Button("Inventory");
+        Button MinimapBtn = new Button("Minimap");
 
         // Add buttons to the grid
         buttonGrid.add(northBtn, 1, 0);  // top
@@ -63,6 +89,8 @@ public class ZorkGUI extends Application {
         buttonGrid.add(southBtn, 1, 2);  // bottom
         buttonGrid.add(takeBtn, 0, 3);   // new row
         buttonGrid.add(dropBtn, 2, 3);   // new row
+        buttonGrid.add(inventoryBtn, 1, 3);
+        buttonGrid.add(MinimapBtn, 1, 4);
 
 
 
@@ -73,6 +101,12 @@ public class ZorkGUI extends Application {
         southBtn.setOnAction(e -> processCommand("go south"));
         eastBtn.setOnAction(e -> processCommand("go east"));
         westBtn.setOnAction(e -> processCommand("go west"));
+
+
+        MinimapBtn.setOnAction(e -> roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/minimap.png")).toExternalForm())));
+        int counter = 0;
+
+
 
         takeBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
@@ -100,8 +134,6 @@ public class ZorkGUI extends Application {
         });
 
 
-
-        VBox topBox = new VBox(0);
         topBox.setAlignment(Pos.CENTER);
         topBox.setStyle("-fx-background-color: #000000;");
         topBox.getChildren().addAll(inputField, roomImage);
@@ -110,7 +142,7 @@ public class ZorkGUI extends Application {
 
         // Create the scene and show the stage
         Scene scene = new Scene(root, 400, 500);
-        primaryStage.setTitle("Edenhelm");
+        primaryStage.setTitle("Flames of Promethius");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -156,8 +188,8 @@ public class ZorkGUI extends Application {
         // Update room image based on current room description
         String roomName = game.getCurrentRoomDescription().toLowerCase();
 
-        if (roomName.contains("outside")) {
-            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/outside.png")).toExternalForm()));
+        if (roomName.contains("embers")) {
+            roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()));
         }
         else if (roomName.contains("basement")) {
             roomImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/basement.png")).toExternalForm()));
@@ -172,7 +204,6 @@ public class ZorkGUI extends Application {
     private Stage inventoryStage; // Separate window
     private boolean inventoryOpen = false; // Toggle tracker
 
-    // 🔹 Toggle the inventory window on/off
     private void toggleInventoryWindow() {
         if (inventoryOpen && inventoryStage != null) {
             inventoryStage.close();
@@ -194,9 +225,9 @@ public class ZorkGUI extends Application {
 
         inventoryOpen = true;
 
-        // Reset flag when manually closed
         inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
     }
+
 
 
     public static void main(String[] args) {

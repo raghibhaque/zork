@@ -1,3 +1,5 @@
+import javafx.scene.control.TextArea;
+
 class NPC extends Character {
     private String dialogue; // what this NPC says when interacted with
 
@@ -14,9 +16,10 @@ class NPC extends Character {
         this.dialogue = dialogue;
     }
 
-    public void speak() {
-        System.out.println(getName() + " says: \"" + dialogue + "\"");
+    public void speak(TextArea outputArea) {
+        outputArea.appendText(getName() + " says: \"" + dialogue + "\"\n");
     }
+
 
     @Override
     public String toString() {

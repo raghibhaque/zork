@@ -34,7 +34,7 @@ public class Room {
     }
 
     public String getLongDescription() {
-        return "You are " + description + ".\n"
+        return " " + description + ".\n"
                 + getItemString() + "\n"
                 + getNPCString() + "\n"
                 + "Exits: " + getExitString();
@@ -53,7 +53,6 @@ public class Room {
         return items.get(itemName.toLowerCase());
     }
 
-    // === NPC Support ===
     private ArrayList<NPC> npcs = new ArrayList<>();
 
     public void addNPC(NPC npc) {

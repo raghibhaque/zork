@@ -13,70 +13,94 @@ Overall, it recreates the classic Zork interactive fiction experience with a uni
 emphasizing exploration and simple command-driven gameplay
 */
 
-import javafx.scene.control.TextInputControl;
-
-import java.util.ArrayList;
-import java.util.Scanner;
+import javafx.scene.control.TextArea;
 
 public class ZorkULGame {
     private Parser parser;
     private Character player;
+    private TextArea outputArea;
 
     public ZorkULGame() {
         createRooms();
         parser = new Parser();
     }
+    public ZorkULGame(TextArea outputArea) { // GUI version
+        this.outputArea = outputArea;
+        createRooms();
+        parser = new Parser();
+    }
+
+
 
 
     private void createRooms() {
-        Room outside, theatre, pub, lab, office, basement, cellar;
+        Room hallOfEmbers, chamberOfEchoes, ironSpire, ashenGarden, crucible, vaultOfChains, keepersQuarters;
 
-        // create rooms
-        outside = new Room("Outside the main entrance of the university \n" +
-                "The campus is silent. The windows above are dark... but you can’t shake the feeling that something is watching you.");
-        theatre = new Room("in a lecture theatre");
-        pub = new Room("In the campus pub");
-        lab = new Room("In a computing lab");
-        office = new Room("In the computing admin office");
-        basement = new Room("In the gloomy basement");
-        cellar = new Room("A pungent smell emanates deep within...");
+        hallOfEmbers = new Room("You awaken in the Hall of Embers.\n" +
+                "The walls flicker faintly with dying torches. Charred murals of gods and flame line the stone.\n" +
+                "The air is heavy with the scent of ash — and the faint echo of fire long forgotten.");
 
-        // initialise room exits
-        outside.setExit("east", theatre);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
-        outside.setExit("north", basement);
+        chamberOfEchoes = new Room("You enter the Chamber of Echoes.\n" +
+                "The sound of your footsteps repeats endlessly. Whispered voices murmur truths and lies alike.\n" +
+                "You feel as though the walls themselves are listening.");
 
-        theatre.setExit("west", outside);
+        ironSpire = new Room("You stand before the Iron Spire.\n" +
+                "An obsidian tower looms above, its surface etched with glowing runes.\n" +
+                "The air hums faintly — power dormant, waiting to be awakened.");
 
-        pub.setExit("east", outside);
-        pub.setExit("south", basement);
+        ashenGarden = new Room("You step into the Ashen Garden.\n" +
+                "What once were trees are now blackened silhouettes. Their roots still pulse faintly with red embers beneath the soil.\n" +
+                "Something ancient sleeps here, beneath the ash.");
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
+        crucible = new Room("You arrive in the Crucible.\n" +
+                "A massive forge dominates the center. Blue fire burns without heat — whispering in a forgotten tongue.\n" +
+                "This place feels like both a tomb and a beginning.");
 
-        office.setExit("west", lab);
-        office.setExit("south", pub);
+        vaultOfChains = new Room("You descend into the Vault of Chains.\n" +
+                "Rusting shackles hang from the ceiling. The scent of iron and smoke fills your lungs.\n" +
+                "On the walls are carvings of a man bound to stone — the punishment of Prometheus.");
 
-        basement.setExit("north", lab);
-        basement.setExit("east", cellar);
+        keepersQuarters = new Room("You find a dimly lit chamber — the Keeper’s Quarters.\n" +
+                "Ash and soot cover everything. A broom leans against the wall beside a pile of extinguished torches.\n" +
+                "This must be where the Keeper of Ashes once rested.");
 
-        // create the player character and start outside
-        player = new Character("player", outside);
-        NPC janitor = new NPC("Janitor", outside,
-                "You shouldn’t be here after dark… not since the incident in the basement.");
-        outside.addNPC(janitor);
-        lab.addItem(new Item("laptop", "a silver MacBook"));
-        pub.addItem(new Item("book", "a dusty programming manual"));
 
-        // all items
-        office.addItem(new Item("key", "a small golden key. It has the word basement etched into it..."));
-        outside.addItem(new Item("note", "An old piece of papyrus."));
-        lab.addItem(new Item("Vial", "a cracked rusty vial, it smells a bit funny."));
-        pub.addItem(new Item("book", "a dusty programming manual"));
-        basement.addItem(new Item("Diary", "A ragged diary, seems like someone put alot of their secrets here."));
-        office.addItem(new Item("Document", "a very important piece of paper with Edenhelm's logo on the front"));
+
+        hallOfEmbers.setExit("north", chamberOfEchoes);
+        chamberOfEchoes.setExit("south", hallOfEmbers);
+        chamberOfEchoes.setExit("east", ironSpire);
+        ironSpire.setExit("west", chamberOfEchoes);
+        ironSpire.setExit("south", ashenGarden);
+        ashenGarden.setExit("north", ironSpire);
+        ashenGarden.setExit("east", vaultOfChains);
+        vaultOfChains.setExit("west", ashenGarden);
+        vaultOfChains.setExit("south", keepersQuarters);
+        keepersQuarters.setExit("north", vaultOfChains);
+        keepersQuarters.setExit("east", crucible);
+        crucible.setExit("west", keepersQuarters);
+
+
+        player = new Character("player", hallOfEmbers);
+
+        NPC keeper = new NPC("Keeper", keepersQuarters,
+                "He gave them the fire... and they burned the world with it.\n" +
+                        "Now I sweep the ashes, so the gods don’t see what remains.");
+        keepersQuarters.addNPC(keeper);
+
+
+        NPC Leonidus = new NPC("Leonidus", hallOfEmbers,"Tutorial test");
+        hallOfEmbers.addNPC(Leonidus);
+
+        hallOfEmbers.addItem(new Item("note", "An old, crumbling piece of parchment."));
+        hallOfEmbers.addItem(new Item("Torch", "A weakly burning torch — the last flame of Prometheus."));
+        chamberOfEchoes.addItem(new Item("Echo Crystal", "A shimmering crystal that hums when you speak near it."));
+        ironSpire.addItem(new Item("Heart of Fire", "A glowing ember pulsing faintly. It hums with restrained power."));
+        ashenGarden.addItem(new Item("Tear of Gaia", "A small, hardened drop of glowing sap. It feels alive."));
+        vaultOfChains.addItem(new Item("Broken Chain", "A piece of divine metal — once used to bind a god."));
+        keepersQuarters.addItem(new Item("Journal", "A scorched book written by the Keeper. Some pages are still legible."));
+        crucible.addItem(new Item("Flame Core", "A burning sphere of blue fire. Its warmth feels... wrong."));
     }
+
 
     public void play() {
         printWelcome();
@@ -89,9 +113,11 @@ public class ZorkULGame {
         System.out.println("Thank you for playing. Goodbye.");
     }
 
+
+
     private void printWelcome() {
         System.out.println();
-        System.out.println("Welcome to the University adventure!");
+        System.out.println("Welcome to the game!");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(player.getCurrentRoom().getLongDescription());
@@ -143,7 +169,7 @@ public class ZorkULGame {
 
 
     private void printHelp() {
-        System.out.println("You are lost. You are alone. You wander around the university.");
+        System.out.println("You are lost. You are alone. The flame is burning.");
         System.out.print("Your command words are: ");
         parser.showCommands();
     }
@@ -164,7 +190,7 @@ public class ZorkULGame {
         Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("There is no door!");
+            print("No door here!");
         }
         if (nextRoom.getDescription().contains("basement") && player.getItem("key") == null) {
             System.out.println("The basement door is locked tight. You need the old key.");
@@ -220,7 +246,7 @@ public class ZorkULGame {
 
         for (NPC npc : currentRoom.getNPCs()) {
             if (npc.getName().equalsIgnoreCase(npcName)) {
-                npc.speak();
+                npc.speak(outputArea);
                 return;
             }
         }
@@ -249,37 +275,46 @@ public class ZorkULGame {
     }
     private void readItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Read what?");
+            print("Read what?");
             return;
         }
+
         String itemName = command.getSecondWord();
         Item item = player.getItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have " + itemName + " to read.");
+            item = player.getCurrentRoom().getItem(itemName);
+        }
+
+        if (item == null) {
+            print("There is no " + itemName + " here to read.");
             return;
         }
 
-
-
         switch (itemName.toLowerCase()) {
-            case "diary":
-                System.out.println("The diary pages are torn and smudged with ink...");
-                System.out.println("\"Day 67: The machine in the lab won’t stop humming. "
-                        + "We sealed the lower gate, but it whispers still. If anyone finds this—do not stay after midnight.\"");
-                break;
-                case "document":
-                    System.out.println("The document is stamped 'PROJECT HELIOS — Edenhelm University.'");
-                    System.out.println("\"Effective immediately, all public references to the Helios Study... "
-                            + "The press has begun to circulate rumors. Faculty are to deny any knowledge. "
-                            + "Let us ensure its light does not draw unwanted eyes.\"");
-                    break;
             case "note":
-                System.out.println("To whomever enters Edenhelm — the gates will not open again until dawn. Find the truth. End it.");
-                System.out.println("FIND THE KEY.");
+                System.out.println("test");
                 break;
+
+            case "diary":
+                System.out.println("The diary pages are torn and smudged with ink...\n\"Day 67: The machine in the lab won’t stop humming. We sealed the lower gate, but it whispers still.\"");
+                break;
+
+            case "document":
+                System.out.println("The document bears the seal of Edenhelm:\n\"Effective immediately, all public references to the Helios Study are forbidden.\"");
+                break;
+
             default:
-                System.out.println("There's nothing to read in that.");
+                print("There's nothing written on that.");
+                break;
+        }
+    }
+
+    private void print(String message) {
+        if (outputArea != null) {
+            outputArea.appendText(message + "\n");
+        } else {
+            System.out.println(message);
         }
     }
 } // end of class
