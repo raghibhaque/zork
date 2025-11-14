@@ -30,6 +30,7 @@ public class ZorkULGame {
         createRooms();
         parser = new Parser();
         System.out.println("ZorkULGame started");
+
     }
 
     public ZorkULGame(TextArea outputArea) { // GUI version
@@ -37,6 +38,7 @@ public class ZorkULGame {
         createRooms();
         // loadGameIfExists();
         parser = new Parser();
+        printWelcome();
     }
 
     private void createRooms() {
@@ -219,7 +221,7 @@ public class ZorkULGame {
 
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
-            print("Go where?");
+            System.out.println("Go where?");
             return;
         }
 
@@ -227,7 +229,7 @@ public class ZorkULGame {
         Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
-            print("No door here!");
+            System.out.println("No door here!");
             return;
         }
 
@@ -236,17 +238,11 @@ public class ZorkULGame {
                 direction.equalsIgnoreCase("north") &&
                 !hallOfEmbers.isAltarIgnited()) {
 
-            print("A wall of cold ash blocks your path. The Ember Altar is dormant.");
+            System.out.println("A wall of cold ash blocks your path. The Ember Altar is dormant.");
             return;
         }
-
-        // MOVE ROOM
         player.setCurrentRoom(nextRoom);
-        print(player.getCurrentRoom().getLongDescription());
-    }
-
-    public static void main(String[] args) {
-        ZorkGUI.launch(ZorkGUI.class, args);
+        System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
     public String getCurrentRoomDescription() {
@@ -285,15 +281,14 @@ public class ZorkULGame {
 
         for (NPC npc : currentRoom.getNPCs()) {
             if (npc.getName().equalsIgnoreCase(npcName)) {
-                npc.speak(outputArea);
+                npc.speak(null);  // force console output
                 return;
             }
         }
 
-        print("There’s no one named " + npcName + " here.");
+        System.out.println("There’s no one named " + npcName + " here.");
     }
-
-    private void dropItem(Command command) {
+        private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
             return;
@@ -315,7 +310,7 @@ public class ZorkULGame {
 
     private void readItem(Command command) {
         if (!command.hasSecondWord()) {
-            print("Read what?");
+            System.out.println("Read what?");
             return;
         }
 
@@ -327,7 +322,7 @@ public class ZorkULGame {
         }
 
         if (item == null) {
-            print("There is no " + itemName + " here to read.");
+            System.out.println("There is no " + itemName + " here to read.");
             return;
         }
 
@@ -345,7 +340,7 @@ public class ZorkULGame {
                 break;
 
             default:
-                print("There's nothing written on that.");
+                System.out.println("There's nothing written on that.");
                 break;
         }
     }
@@ -361,46 +356,49 @@ public class ZorkULGame {
     public void saveGame() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             out.writeObject(player);
-            print("Game auto-saved.");
+            System.out.println("Game auto-saved.");
         } catch (IOException e) {
-            print("Auto-save failed: " + e.getMessage());
+            System.out.println("Auto-save failed: " + e.getMessage());
         }
     }
 
     public void loadGameIfExists() {
         File f = new File(SAVE_FILE);
         if (!f.exists()) {
-            print("No save file found. Starting new game.");
+            System.out.println("No save file found. Starting new game.");
             return;
         }
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVE_FILE))) {
             player = (Character) in.readObject();
             System.out.println("Game loaded automatically.");
-            print(player.getCurrentRoom().getLongDescription());
+            System.out.println(player.getCurrentRoom().getLongDescription());
         } catch (Exception e) {
-            print("Failed to load save: " + e.getMessage());
+            System.out.println("Failed to load save: " + e.getMessage());
         }
     }
 
     private void useItem(Command command) {
         if (!command.hasSecondWord()) {
-            print("Use what?");
+            System.out.println("Use what?");
             return;
         }
 
         String itemName = command.getSecondWord().toLowerCase();
 
-        if (itemName.equals("torch") &&
-                player.getCurrentRoom() == hallOfEmbers) {
+        if (itemName.equals("torch") && player.getCurrentRoom() == hallOfEmbers) {
 
             hallOfEmbers.igniteAltar();
-            print("The torch flares brightly as you ignite the Ember Altar!");
-            print("The northern gate rumbles open...");
+            System.out.println("The torch flares brightly as you ignite the Ember Altar!");
+            System.out.println("The northern gate rumbles open...");
             return;
         }
 
-        print("You can’t use that here.");
-    }
+        System.out.println("You can’t use that here.");
 
+
+    }
+    public static void main(String[] args) {
+        ZorkGUI.launch(ZorkGUI.class, args);
+    }
 } // end of class

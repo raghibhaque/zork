@@ -13,6 +13,7 @@ class NPC extends Character implements Serializable {
     }
 
     public String getDialogue() {
+        System.out.println(dialogue);
         return dialogue;
     }
 
@@ -21,8 +22,13 @@ class NPC extends Character implements Serializable {
     }
 
     public void speak(TextArea outputArea) {
-        outputArea.appendText(getName() + " says: \"" + dialogue + "\"\n");
+        if (outputArea == null) {
+            System.out.println(dialogue);
+        } else {
+            outputArea.appendText(dialogue + "\n");
+        }
     }
+
 
 
     @Override

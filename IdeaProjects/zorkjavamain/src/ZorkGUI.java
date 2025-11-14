@@ -84,7 +84,6 @@ public class ZorkGUI extends Application {
         Button takeBtn = new Button("Take");
         Button dropBtn = new Button("Drop");
         Button inventoryBtn = new Button("Inventory");
-        Button minimapBtn = new Button("Minimap");
 
         buttonGrid.add(northBtn, 1, 0);
         buttonGrid.add(westBtn, 0, 1);
@@ -95,7 +94,7 @@ public class ZorkGUI extends Application {
         buttonGrid.add(inventoryBtn, 1, 3);
         buttonGrid.add(dropBtn, 2, 3);
 
-        buttonGrid.add(minimapBtn, 1, 4);
+
 
         root.setBottom(buttonGrid);
 
@@ -104,10 +103,6 @@ public class ZorkGUI extends Application {
         eastBtn.setOnAction(e -> processCommand("go east"));
         westBtn.setOnAction(e -> processCommand("go west"));
 
-        minimapBtn.setOnAction(e ->
-                roomImage.setImage(new Image(Objects.requireNonNull(
-                        getClass().getResource("/images/minimap.png")).toExternalForm()))
-        );
 
         takeBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
