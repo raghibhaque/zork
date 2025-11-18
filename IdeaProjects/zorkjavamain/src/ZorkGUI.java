@@ -84,6 +84,8 @@ public class ZorkGUI extends Application {
         Button takeBtn = new Button("Take");
         Button dropBtn = new Button("Drop");
         Button inventoryBtn = new Button("Inventory");
+        Button saveBtn = new Button("Save Game");
+        Button loadBtn = new Button("Load Game");
 
         buttonGrid.add(northBtn, 1, 0);
         buttonGrid.add(westBtn, 0, 1);
@@ -93,6 +95,9 @@ public class ZorkGUI extends Application {
         buttonGrid.add(takeBtn, 0, 3);
         buttonGrid.add(inventoryBtn, 1, 3);
         buttonGrid.add(dropBtn, 2, 3);
+        buttonGrid.add(saveBtn, 3, 3);
+        buttonGrid.add(loadBtn,  4, 3);
+
 
 
 
@@ -102,6 +107,10 @@ public class ZorkGUI extends Application {
         southBtn.setOnAction(e -> processCommand("go south"));
         eastBtn.setOnAction(e -> processCommand("go east"));
         westBtn.setOnAction(e -> processCommand("go west"));
+
+
+        saveBtn.setOnAction(e -> processCommand("save game"));
+        loadBtn.setOnAction(e -> processCommand("load game"));
 
 
         takeBtn.setOnAction(e -> {
@@ -125,7 +134,7 @@ public class ZorkGUI extends Application {
         inventoryBtn.setOnAction(e -> toggleInventoryWindow());
 
         // KEYBOARD MOVEMENT
-        Scene scene = new Scene(root, 400, 500);
+        Scene scene = new Scene(root, 700, 800);
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case W: processCommand("go north"); break;
@@ -168,7 +177,13 @@ public class ZorkGUI extends Application {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
             ));
-        } else {
+        }
+            else if (roomName.contains("echoes")){
+                roomImage.setImage(new Image(
+                        Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
+                ));
+            }
+        else {
             roomImage.setImage(null);
         }
     }

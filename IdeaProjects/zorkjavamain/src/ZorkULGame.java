@@ -1,20 +1,4 @@
-/* This game is a classic text-based adventure set in a university environment.
-   The player starts outside the main entrance and can navigate through different rooms like a
-   lecture theatre, campus pub, computing lab, and admin office using simple text commands (e.g., "go east", "go west").
-    The game provides descriptions of each location and lists possible exits.
-
-Key features include:
-Room navigation: Moving among interconnected rooms with named exits.
-Simple command parser: Recognizes a limited set of commands like "go", "help", and "quit".
-Player character: Tracks current location and handles moving between rooms.
-Text descriptions: Provides immersive text output describing the player's surroundings and available options.
-Help system: Lists valid commands to guide the player.
-Overall, it recreates the classic Zork interactive fiction experience with a university-themed setting,
-emphasizing exploration and simple command-driven gameplay
-*/
-
 import javafx.scene.control.TextArea;
-
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.*;
@@ -25,6 +9,8 @@ public class ZorkULGame {
     private TextArea outputArea;
     private static final String SAVE_FILE = "savegame.ser";
     private Room hallOfEmbers;
+    private Room chamberOfEchoes;
+    private Item note;
 
     public ZorkULGame() {
         createRooms();
@@ -42,19 +28,16 @@ public class ZorkULGame {
     }
 
     private void createRooms() {
-
-        // IMPORTANT: assign to the FIELD, not a new local variable
         hallOfEmbers = new Room(
                 "You awaken in the Hall of Embers.\n" +
                         "The walls flicker faintly with dying torches. Charred murals of gods and flame line the stone.\n" +
                         "The air is heavy with the scent of ash — and the faint echo of fire long forgotten."
         );
 
-        // Other rooms → these are local variables
-        Room chamberOfEchoes = new Room(
+        chamberOfEchoes = new Room(
                 "You enter the Chamber of Echoes.\n" +
                         "The sound of your footsteps repeats endlessly. Whispered voices murmur truths and lies alike.\n" +
-                        "You feel as though the walls themselves are listening."
+                        "You feel as though the walls themselves are listening. The shiny ruby glimmers among the generations of skulls."
         );
 
         Room ironSpire = new Room(
@@ -124,10 +107,16 @@ public class ZorkULGame {
         );
         hallOfEmbers.addNPC(Orpheon);
 
-        hallOfEmbers.addItem(new Item("note", "An old, crumbling piece of parchment."));
         hallOfEmbers.addItem(new Item("torch", "A weakly burning torch — the last flame of Prometheus."));
 
-        chamberOfEchoes.addItem(new Item("Echo Crystal", "A shimmering crystal that hums when you speak near it."));
+        chamberOfEchoes.addItem(new Item("Gem", "The trapped gold veins evoke the image of caged fire."));
+        this.note = new Item("note",
+                "Pick the gem up. The old riddleman used to describe the stolen gift as 'That which is bound to stone, \n" +
+                        " yet yearns forever skyward.'\n" +
+                        " If you wish the way to open, speak the thing he named to the empty air "
+        );
+        chamberOfEchoes.addItem(this.note);
+
         ironSpire.addItem(new Item("Heart of Fire", "A glowing ember pulsing faintly. It hums with restrained power."));
         ashenGarden.addItem(new Item("Tear of Gaia", "A hardened drop of glowing sap. It feels alive."));
         vaultOfChains.addItem(new Item("Broken Chain", "A fragment of divine metal — once used to bind a god."));
@@ -187,6 +176,9 @@ public class ZorkULGame {
             case "save":
                 saveGame();
                 break;
+            case "invBtn":
+                getInventory();
+                break;
             case "load":
                 loadGameIfExists();
                 break;
@@ -219,6 +211,10 @@ public class ZorkULGame {
         return player.getInventoryString();
     }
 
+    public void getInventory() {
+        System.out.println(player.getInventoryString());
+    }
+
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Go where?");
@@ -234,9 +230,7 @@ public class ZorkULGame {
         }
 
         // BLOCK NORTH IN HALL OF EMBERS
-        if (player.getCurrentRoom() == hallOfEmbers &&
-                direction.equalsIgnoreCase("north") &&
-                !hallOfEmbers.isAltarIgnited()) {
+        if (player.getCurrentRoom() == hallOfEmbers && direction.equalsIgnoreCase("north") && !hallOfEmbers.isAltarIgnited()) {
 
             System.out.println("A wall of cold ash blocks your path. The Ember Altar is dormant.");
             return;
@@ -267,6 +261,11 @@ public class ZorkULGame {
             player.getCurrentRoom().removeItem(itemName);
             item.setLocation("inventory");
             System.out.println("You picked up the " + item.getName() + ".");
+        }
+
+        note.setVisible(itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes);
+        if(itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes) {
+            System.out.println("A tarnished old note falls on the ground.");
         }
     }
 
@@ -345,18 +344,10 @@ public class ZorkULGame {
         }
     }
 
-    private void print(String message) {
-        if (outputArea != null) {
-            outputArea.appendText(message + "\n");
-        } else {
-            System.out.println(message);
-        }
-    }
-
     public void saveGame() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             out.writeObject(player);
-            System.out.println("Game auto-saved.");
+            System.out.println("Game saved.");
         } catch (IOException e) {
             System.out.println("Auto-save failed: " + e.getMessage());
         }
@@ -393,10 +384,7 @@ public class ZorkULGame {
             System.out.println("The northern gate rumbles open...");
             return;
         }
-
         System.out.println("You can’t use that here.");
-
-
     }
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
