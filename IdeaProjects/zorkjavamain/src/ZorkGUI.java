@@ -152,18 +152,19 @@ public class ZorkGUI extends Application {
     }
 
     private void processCommand(String command) {
-        String[] words = command.trim().split(" ");
+        String[] words = command.trim().split("\\s+");
         Command cmd;
 
-        if (words.length == 1) {
-            cmd = new Command(words[0], null);   // single-word command
-        } else {
-            cmd = new Command(words[0], words[1]); // two-word
-        }
+        String w1 = words.length > 0 ? words[0] : null;
+        String w2 = words.length > 1 ? words[1] : null;
+        String w3 = words.length > 2 ? words[2] : null;
+
+        cmd = new Command(w1, w2, w3);
 
         game.processCommand(cmd);
         displayGameState();
     }
+
 
     private void displayGameState() {
         outputArea.clear();

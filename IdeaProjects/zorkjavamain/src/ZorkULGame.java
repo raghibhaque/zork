@@ -11,6 +11,7 @@ public class ZorkULGame {
     private Room hallOfEmbers;
     private Room chamberOfEchoes;
     private Item note;
+    private Item puzzle1;
 
     public ZorkULGame() {
         createRooms();
@@ -182,6 +183,9 @@ public class ZorkULGame {
             case "load":
                 loadGameIfExists();
                 break;
+            case "give":
+                giveItem(command);
+                break;
             case "use":
                 useItem(command);
                 break;
@@ -201,6 +205,8 @@ public class ZorkULGame {
         return false;
     }
 
+
+
     private void printHelp() {
         System.out.println("You are lost. You are alone. The flame is burning.");
         System.out.print("Your command words are: ");
@@ -210,6 +216,61 @@ public class ZorkULGame {
     public String getPlayerInventory() {
         return player.getInventoryString();
     }
+
+    private void giveItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Give what?");
+            return;
+        }
+        if (!command.hasThirdWord()) {
+            System.out.println("Give it to who?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        String npcName = command.getThirdWord();
+
+        Item item = player.getItem(itemName);
+
+        if (item == null) {
+            System.out.println("You don't have " + itemName + "!");
+            return;
+        }
+
+        NPC target = null;
+        for (NPC npc : player.getCurrentRoom().getNPCs()) {
+            if (npc.getName().equalsIgnoreCase(npcName)) {
+                target = npc;
+                break;
+            }
+        }
+
+        if (target == null) {
+            System.out.println("There is no " + npcName + " here.");
+            return;
+        }
+
+        if (npcName.equalsIgnoreCase("Orpheon") && itemName.equalsIgnoreCase("Gem")) {
+
+            System.out.println(
+                    "Orpheon takes the Gem into his palm.\n" +
+                            "\"Ah… the Echoing Core,\" he whispers.\n" +
+                            "\"You have done well, Child of Ash. Take this — the Ember Fragment. \n" +
+                            "With it, the old flame remembers you.\"\n"
+            );
+
+            player.removeItem(item);
+
+            Item emberFragment = new Item("EmberFragment",
+                    "A glowing shard of primordial fire. Warm, alive, and waiting.");
+            player.addItem(emberFragment);
+
+            return;
+        }
+        System.out.println(npcName + " does not want the " + itemName + ".");
+    }
+
+
 
     public void getInventory() {
         System.out.println(player.getInventoryString());
@@ -384,8 +445,16 @@ public class ZorkULGame {
             System.out.println("The northern gate rumbles open...");
             return;
         }
+
+        if (itemName.equalsIgnoreCase("Gem") && player.getCurrentRoom()== chamberOfEchoes) {
+            System.out.println("*A voice pierces your mind, type in 'XYZ'...");
+        }
+
         System.out.println("You can’t use that here.");
+
+
     }
+
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
     }
