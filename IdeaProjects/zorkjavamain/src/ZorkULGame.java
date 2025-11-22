@@ -12,6 +12,9 @@ public class ZorkULGame {
     private Room chamberOfEchoes;
     private Item note;
     private Item puzzle1;
+    private Room ironSpire;
+    private boolean finalRiddleSolved = false;
+    private Room crucible;
 
     public ZorkULGame() {
         createRooms();
@@ -32,7 +35,8 @@ public class ZorkULGame {
         hallOfEmbers = new Room(
                 "You awaken in the Hall of Embers.\n" +
                         "The walls flicker faintly with dying torches. Charred murals of gods and flame line the stone.\n" +
-                        "The air is heavy with the scent of ash — and the faint echo of fire long forgotten."
+                        "The air is heavy with the scent of ash — and the faint echo of fire long forgotten." +
+                        "Find me the gem and I will give you a pious reward."
         );
 
         chamberOfEchoes = new Room(
@@ -41,7 +45,7 @@ public class ZorkULGame {
                         "You feel as though the walls themselves are listening. The shiny ruby glimmers among the generations of skulls."
         );
 
-        Room ironSpire = new Room(
+        ironSpire = new Room(
                 "You stand before the Iron Spire.\n" +
                         "An obsidian tower looms above, its surface etched with glowing runes.\n" +
                         "The air hums faintly — power dormant, waiting to be awakened."
@@ -53,7 +57,7 @@ public class ZorkULGame {
                         "Something ancient sleeps here, beneath the ash."
         );
 
-        Room crucible = new Room(
+        crucible = new Room(
                 "You arrive in the Crucible.\n" +
                         "A massive forge dominates the center. Blue fire burns without heat — whispering in a forgotten tongue.\n" +
                         "This place feels like both a tomb and a beginning."
@@ -65,36 +69,18 @@ public class ZorkULGame {
                         "On the walls are carvings of a man bound to stone — the punishment of Prometheus."
         );
 
-        Room keepersQuarters = new Room(
-                "You find a dimly lit chamber — the Keeper’s Quarters.\n" +
-                        "Ash and soot cover everything. A broom leans against the wall beside a pile of extinguished torches.\n" +
-                        "This must be where the Keeper of Ashes once rested."
-        );
-
         hallOfEmbers.setExit("north", chamberOfEchoes);
         chamberOfEchoes.setExit("south", hallOfEmbers);
-
-        chamberOfEchoes.setExit("east", ironSpire);
         ironSpire.setExit("west", chamberOfEchoes);
-
         ironSpire.setExit("south", ashenGarden);
         ashenGarden.setExit("north", ironSpire);
-
         ashenGarden.setExit("east", vaultOfChains);
         vaultOfChains.setExit("west", ashenGarden);
-
-        vaultOfChains.setExit("south", keepersQuarters);
-        keepersQuarters.setExit("north", vaultOfChains);
-
-        keepersQuarters.setExit("east", crucible);
-        crucible.setExit("west", keepersQuarters);
+        vaultOfChains.setExit("south", crucible);
+        crucible.setExit("north", vaultOfChains);
 
         player = new Character("player", hallOfEmbers);
 
-        NPC keeper = new NPC("Keeper", keepersQuarters,
-                "He gave them the fire... and they burned the world with it.\n" +
-                        "Now I sweep the ashes, so the gods don’t see what remains.");
-        keepersQuarters.addNPC(keeper);
 
         NPC Orpheon = new NPC("Orpheon", hallOfEmbers,
                 "\"Ah… you wake at last, Child of Ash.\n" +
@@ -107,6 +93,11 @@ public class ZorkULGame {
                         "and ignite the altar. Only then will the path ahead answer you.\"\n"
         );
         hallOfEmbers.addNPC(Orpheon);
+        NPC sentinel = new NPC("Sentinel", crucible,
+                "A towering figure of living obsidian guards the inner flame.\n" +
+                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\""
+        );
+        crucible.addNPC(sentinel);
 
         hallOfEmbers.addItem(new Item("torch", "A weakly burning torch — the last flame of Prometheus."));
 
@@ -117,11 +108,9 @@ public class ZorkULGame {
                         " If you wish the way to open, speak the thing he named to the empty air "
         );
         chamberOfEchoes.addItem(this.note);
-
-        ironSpire.addItem(new Item("Heart of Fire", "A glowing ember pulsing faintly. It hums with restrained power."));
-        ashenGarden.addItem(new Item("Tear of Gaia", "A hardened drop of glowing sap. It feels alive."));
-        vaultOfChains.addItem(new Item("Broken Chain", "A fragment of divine metal — once used to bind a god."));
-        keepersQuarters.addItem(new Item("Journal", "A scorched book written by the Keeper. Some pages are still legible."));
+        vaultOfChains.addItem(new Item("EtchedStone",
+                "Carving: 'He who stole the First Flame was bound in chains. "
+                        + "Remember his gift, for fire is the key.'"));
         crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
     }
 
@@ -170,6 +159,9 @@ public class ZorkULGame {
                 break;
             case "read":
                 readItem(command);
+                break;
+            case "say":
+                sayWord(command);
                 break;
             case "talk":
                 talkToNPC(command);
@@ -324,10 +316,18 @@ public class ZorkULGame {
             System.out.println("You picked up the " + item.getName() + ".");
         }
 
-        note.setVisible(itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes);
-        if(itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes) {
-            System.out.println("A tarnished old note falls on the ground.");
+        if (itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes) {
+            System.out.println(
+                    "A tarnished old note falls on the ground.\n" +
+                            "It unfurls by itself, whispering:\n" +
+                            "\"That which is bound to stone, yet yearns forever skyward...\n" +
+                            "Speak its name to the hollow air, and the path will open.\""
+            );
+
+            note.setVisible(true);
+            System.out.println(player.getCurrentRoom().getLongDescription());
         }
+
     }
 
     private void talkToNPC(Command command) {
@@ -348,7 +348,71 @@ public class ZorkULGame {
 
         System.out.println("There’s no one named " + npcName + " here.");
     }
-        private void dropItem(Command command) {
+
+    private boolean echoPuzzleSolved = false;
+
+    private void sayWord(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Say what?");
+            return;
+        }
+
+        String spoken = command.getSecondWord().toLowerCase();
+
+        // First Riddle w/ gem
+        if (player.getCurrentRoom() == chamberOfEchoes && !echoPuzzleSolved) {
+            if (spoken.equals("chain")) {
+                echoPuzzleSolved = true;
+
+                System.out.println(
+                        "Your voice rebounds endlessly...\n" +
+                                "The chamber trembles.\n" +
+                                "A hidden archway reveals itself to the east!"
+                );
+
+                chamberOfEchoes.setExit("east", ironSpire);
+                return;
+            } else {
+                System.out.println("The walls repeat your words... but nothing happens.");
+                return;
+            }
+        }
+
+        // SENTINEL FINAL RIDDLE
+        if (player.getCurrentRoom() == crucible && !finalRiddleSolved) {
+            if (spoken.equals("fire")) {
+
+                finalRiddleSolved = true;
+
+                System.out.println(
+                        "The Sentinel bows its head.\n" +
+                                "\"You speak the truth. Fire was the first gift…\"\n" +
+                                "It extends its hand, revealing a blazing orb.\n" +
+                                "You receive: PrimordialFlame."
+                );
+
+                Item flame = new Item("PrimordialFlame",
+                        "The First Fire — blazing with impossible brilliance.");
+                player.addItem(flame);
+
+                System.out.println(
+                        "As you grasp the Primordial Flame, the world ignites in gold.\n" +
+                                "Ash lifts from the ground. Stone cracks and blooms.\n" +
+                                "The ancient halls roar back to life.\n\n" +
+                                "You have restored the Primordial Flame.\n" +
+                                "The age of ash is over.\n\n" +
+                                "*** YOU WIN ***"
+                );
+                return;
+
+            } else {
+                System.out.println("The Sentinel's eyes narrow. \"That is not the truth.\"");
+                return;
+            }
+        }
+    }
+
+    private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
             return;
@@ -388,17 +452,13 @@ public class ZorkULGame {
 
         switch (itemName.toLowerCase()) {
             case "note":
-                System.out.println("test");
+                System.out.println(
+                        "The note unfurls by itself...\n" +
+                                "A whisper crawls across the chamber:\n\n" +
+                                "\"That which is bound to stone, yet yearns forever skyward...\"\n" +
+                                "\"Speak its name to the hollow air, and the path will open.\""
+                );
                 break;
-
-            case "diary":
-                System.out.println("The diary pages are torn and smudged with ink...\n\"Day 67: The machine in the lab won’t stop humming. We sealed the lower gate, but it whispers still.\"");
-                break;
-
-            case "document":
-                System.out.println("The document bears the seal of Edenhelm:\n\"Effective immediately, all public references to the Helios Study are forbidden.\"");
-                break;
-
             default:
                 System.out.println("There's nothing written on that.");
                 break;
@@ -446,9 +506,9 @@ public class ZorkULGame {
             return;
         }
 
-        if (itemName.equalsIgnoreCase("Gem") && player.getCurrentRoom()== chamberOfEchoes) {
-            System.out.println("*A voice pierces your mind, type in 'XYZ'...");
-        }
+       // if (itemName.equalsIgnoreCase("Gem") && player.getCurrentRoom()== chamberOfEchoes) {
+      //      System.out.println("*A voice pierces your mind, type in 'XYZ'...");
+      //  }
 
         System.out.println("You can’t use that here.");
 

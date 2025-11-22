@@ -170,8 +170,6 @@ public class ZorkGUI extends Application {
         outputArea.clear();
         outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
-
-        // IMAGE SWITCHING
         String roomName = game.getCurrentRoomDescription().toLowerCase();
 
         if (roomName.contains("embers")) {
@@ -184,6 +182,11 @@ public class ZorkGUI extends Application {
                         Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
                 ));
             }
+            else if (roomName.contains("spire")) {
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/spire.png")).toExternalForm()
+            ));
+        }
         else {
             roomImage.setImage(null);
         }
