@@ -1,0 +1,5 @@
+public enum CommandWord {
+    GO, TAKE, DROP, INVENTORY, READ, SAY, TALK,
+    SAVE, LOAD, GIVE, USE, HELP, QUIT, INVBTN,
+    UNKNOWN
+}

@@ -23,15 +23,29 @@ public class ZorkGUI extends Application {
     private ImageView roomImage;
     private Stage inventoryStage;
     private boolean inventoryOpen = false;
+
     @Override
     public void start(Stage primaryStage) {
         outputArea = new TextArea();
         outputArea.setEditable(false);
         outputArea.setWrapText(true);
 
+        // *** DARK MODE TEXT AREA ***
+        outputArea.setStyle(
+                "-fx-control-inner-background: #000;" +
+                        "-fx-background-color: #000;" +
+                        "-fx-text-fill: #ffb366;" +
+                        "-fx-highlight-fill: #444;" +
+                        "-fx-highlight-text-fill: white;"
+        );
+
         game = new ZorkULGame(outputArea);
 
         BorderPane root = new BorderPane();
+
+        // *** DARK MODE BACKGROUND FOR MAIN ROOT ***
+        root.setStyle("-fx-background-color: #111;");
+
         root.setCenter(outputArea);
 
         roomImage = new ImageView();
@@ -54,7 +68,10 @@ public class ZorkGUI extends Application {
 
         HBox imageBar = new HBox(10);
         imageBar.setAlignment(Pos.CENTER);
+
+        // *** DARK MODE IMAGE BACKGROUND ***
         imageBar.setStyle("-fx-background-color: black;");
+
         imageBar.getChildren().addAll(minimapImage, roomImage);
 
         TextField inputField = new TextField();
@@ -66,7 +83,10 @@ public class ZorkGUI extends Application {
 
         VBox topBox = new VBox(5);
         topBox.setAlignment(Pos.CENTER);
+
+        // *** DARK TOP BAR ***
         topBox.setStyle("-fx-background-color: black;");
+
         topBox.getChildren().addAll(inputField, imageBar);
 
         root.setTop(topBox);
@@ -75,6 +95,9 @@ public class ZorkGUI extends Application {
         buttonGrid.setAlignment(Pos.CENTER);
         buttonGrid.setHgap(10);
         buttonGrid.setVgap(10);
+
+        // *** DARK BUTTON GRID ***
+        buttonGrid.setStyle("-fx-background-color: #111;");
 
         Button northBtn = new Button("North");
         Button southBtn = new Button("South");
@@ -96,10 +119,7 @@ public class ZorkGUI extends Application {
         buttonGrid.add(inventoryBtn, 1, 3);
         buttonGrid.add(dropBtn, 2, 3);
         buttonGrid.add(saveBtn, 3, 3);
-        buttonGrid.add(loadBtn,  4, 3);
-
-
-
+        buttonGrid.add(loadBtn, 4, 3);
 
         root.setBottom(buttonGrid);
 
@@ -108,10 +128,8 @@ public class ZorkGUI extends Application {
         eastBtn.setOnAction(e -> processCommand("go east"));
         westBtn.setOnAction(e -> processCommand("go west"));
 
-
         saveBtn.setOnAction(e -> processCommand("save game"));
         loadBtn.setOnAction(e -> processCommand("load game"));
-
 
         takeBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
@@ -133,7 +151,6 @@ public class ZorkGUI extends Application {
 
         inventoryBtn.setOnAction(e -> toggleInventoryWindow());
 
-        // KEYBOARD MOVEMENT
         Scene scene = new Scene(root, 700, 800);
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -144,7 +161,12 @@ public class ZorkGUI extends Application {
             }
         });
 
+
+        primaryStage.getIcons().add(new Image(
+                Objects.requireNonNull(getClass().getResource("/images/logo.png")).toExternalForm()));
         primaryStage.setTitle("Flames of Prometheus");
+
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -159,17 +181,18 @@ public class ZorkGUI extends Application {
         String w2 = words.length > 1 ? words[1] : null;
         String w3 = words.length > 2 ? words[2] : null;
 
-        cmd = new Command(w1, w2, w3);
+        CommandWord cw = new CommandWords().getCommandWord(w1);
+        cmd = new Command(cw, w2, w3);
 
         game.processCommand(cmd);
         displayGameState();
     }
 
-
     private void displayGameState() {
         outputArea.clear();
         outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
+
         String roomName = game.getCurrentRoomDescription().toLowerCase();
 
         if (roomName.contains("embers")) {
@@ -177,12 +200,12 @@ public class ZorkGUI extends Application {
                     Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
             ));
         }
-            else if (roomName.contains("echoes")){
-                roomImage.setImage(new Image(
-                        Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
-                ));
-            }
-            else if (roomName.contains("spire")) {
+        else if (roomName.contains("echoes")){
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
+            ));
+        }
+        else if (roomName.contains("spire")) {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/spire.png")).toExternalForm()
             ));
@@ -205,7 +228,13 @@ public class ZorkGUI extends Application {
         TextArea invText = new TextArea(game.getPlayerInventory());
         invText.setEditable(false);
         invText.setWrapText(true);
-        invText.setStyle("-fx-font-size: 14px; -fx-control-inner-background: #222; -fx-text-fill: #fff;");
+
+        // *** DARK INVENTORY WINDOW ***
+        invText.setStyle(
+                "-fx-control-inner-background: #222;" +
+                        "-fx-background-color: #222;" +
+                        "-fx-text-fill: #fff;"
+        );
 
         Scene invScene = new Scene(invText, 300, 200);
         inventoryStage.setScene(invScene);

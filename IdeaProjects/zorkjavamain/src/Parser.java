@@ -11,31 +11,20 @@ public class Parser {
 
     public Command getCommand() {
         System.out.print("> ");
-        String inputLine = reader.nextLine();
 
-        String word1 = null;
-        String word2 = null;
-        String word3 = null;
+        String inputLine = reader.nextLine().trim();
+        String word1 = null, word2 = null, word3 = null;
 
-        Scanner tokenizer = new Scanner(inputLine);
+        String[] words = inputLine.split("\\s+");
 
-        if (tokenizer.hasNext()) {
-            word1 = tokenizer.next();
+        if (words.length > 0) word1 = words[0];
+        if (words.length > 1) word2 = words[1];
+        if (words.length > 2) word3 = words[2];
 
-            if (tokenizer.hasNext()) {
-                word2 = tokenizer.next();
-            }
+        // FIX: use word1, not w1
+        CommandWord cw = commands.getCommandWord(word1);
 
-            if (tokenizer.hasNext()) {
-                word3 = tokenizer.next();
-            }
-        }
-
-        if (commands.isCommand(word1)) {
-            return new Command(word1, word2, word3);
-        } else {
-            return new Command(null, word2, word3);
-        }
+        return new Command(cw, word2, word3);
     }
 
     public void showCommands() {

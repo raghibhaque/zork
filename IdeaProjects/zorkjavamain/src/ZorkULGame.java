@@ -134,62 +134,55 @@ public class ZorkULGame {
     }
 
     boolean processCommand(Command command) {
-        String commandWord = command.getCommandWord();
-
-        if (commandWord == null) {
-            System.out.println("I don't understand your command...");
-            return false;
-        }
-
-        switch (commandWord) {
-            case "help":
+        switch (command.getCommandWord()) {
+            case HELP:
                 printHelp();
                 break;
-            case "go":
+            case GO:
                 goRoom(command);
                 break;
-            case "take":
+            case TAKE:
                 takeItem(command);
                 break;
-            case "drop":
+            case DROP:
                 dropItem(command);
                 break;
-            case "inventory":
+            case INVENTORY:
                 System.out.println(player.getInventoryString());
                 break;
-            case "read":
+            case READ:
                 readItem(command);
                 break;
-            case "say":
+            case SAY:
                 sayWord(command);
                 break;
-            case "talk":
+            case TALK:
                 talkToNPC(command);
                 break;
-            case "save":
+            case SAVE:
                 saveGame();
                 break;
-            case "invBtn":
-                getInventory();
-                break;
-            case "load":
+            case LOAD:
                 loadGameIfExists();
                 break;
-            case "give":
+            case GIVE:
                 giveItem(command);
                 break;
-            case "use":
+            case USE:
                 useItem(command);
                 break;
+            case INVBTN:
+                getInventory();
+                break;
 
-            case "quit":
+            case QUIT:
                 if (command.hasSecondWord()) {
                     System.out.println("Quit what?");
                     return false;
-                } else {
-                    return true;
                 }
+                return true;
 
+            case UNKNOWN:
             default:
                 System.out.println("I don't know what you mean...");
                 break;
@@ -197,9 +190,7 @@ public class ZorkULGame {
         return false;
     }
 
-
-
-    private void printHelp() {
+        private void printHelp() {
         System.out.println("You are lost. You are alone. The flame is burning.");
         System.out.print("Your command words are: ");
         parser.showCommands();

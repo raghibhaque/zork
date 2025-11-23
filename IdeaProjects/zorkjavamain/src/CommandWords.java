@@ -1,32 +1,34 @@
 import java.util.HashMap;
-import java.util.Map;
 
 public class CommandWords {
-    private Map<String, String> validCommands;
+
+    private HashMap<String, CommandWord> commands;
 
     public CommandWords() {
-        validCommands = new HashMap<>();
-        validCommands.put("go", "Move to another room");
-        validCommands.put("quit", "End the game");
-        validCommands.put("help", "Show help");
-        validCommands.put("look", "Look around");
-        validCommands.put("eat", "Eat something");
-        validCommands.put("teleport", "Teleport to a place");
-        validCommands.put("talk", "Speak to an NPC in the room");
-        validCommands.put("save" , "save a game");
-        validCommands.put("load" , "load a game");
+        commands = new HashMap<>();
+
+        // Load all enum names into the map
+        for (CommandWord cw : CommandWord.values()) {
+            if (cw != CommandWord.UNKNOWN) {
+                commands.put(cw.name().toLowerCase(), cw);
+            }
+        }
     }
 
-    public boolean isCommand(String commandWord) {
-        return validCommands.containsKey(commandWord);
+    public CommandWord getCommandWord(String word) {
+        CommandWord cw = commands.get(word.toLowerCase());
+        return (cw != null) ? cw : CommandWord.UNKNOWN;
+    }
+
+    public boolean isCommand(String word) {
+        return commands.containsKey(word.toLowerCase());
     }
 
     public void showAll() {
         System.out.print("Valid commands are: ");
-        for (String command : validCommands.keySet()) {
-            System.out.print(command + " ");
+        for (String cmd : commands.keySet()) {
+            System.out.print(cmd + " ");
         }
         System.out.println();
     }
 }
-
