@@ -16,12 +16,15 @@ public class ZorkULGame {
     private static final String SAVE_FILE = "savegame.ser";
     private Room hallOfEmbers;
     private Room chamberOfEchoes;
+    private Room ashenGarden;
     private Item note;
     private Item puzzle1;
     private Room ironSpire;
     private boolean finalRiddleSolved = false;
     private Room crucible;
     private Room vaultOfChains;
+    private boolean chainsPuzzleSolved = false;
+
 
     // Simple annotation for marking commands
     @Retention(RetentionPolicy.RUNTIME)
@@ -68,7 +71,7 @@ public class ZorkULGame {
                         The air hums faintly — power dormant, waiting to be awakened."""
         );
 
-        Room ashenGarden = new Room(
+        ashenGarden = new Room(
                 """
                         You step into the Ashen Garden.
                         What once were trees are now blackened silhouettes. Their roots still pulse faintly with red embers beneath the soil.
@@ -91,12 +94,16 @@ public class ZorkULGame {
         hallOfEmbers.setExit("north", chamberOfEchoes);
         chamberOfEchoes.setExit("south", hallOfEmbers);
         ironSpire.setExit("west", chamberOfEchoes);
-        ironSpire.setExit("north", crucible);
         ashenGarden.setExit("north", ironSpire);
         ashenGarden.setExit("east", vaultOfChains);
         vaultOfChains.setExit("west", ashenGarden);
         vaultOfChains.setExit("south", crucible);
         crucible.setExit("north", vaultOfChains);
+        chamberOfEchoes.setExit("east", ashenGarden);
+        ashenGarden.setExit("west", chamberOfEchoes);
+       // ironSpire.setExit("north", ashenGarden);
+      //  ashenGarden.setExit("south", ironSpire);
+
 
         player = new Character("player", hallOfEmbers);
 
@@ -128,10 +135,7 @@ public class ZorkULGame {
                         " If you wish the way to open, speak the thing he named to the empty air "
         );
         chamberOfEchoes.addItem(this.note);
-        vaultOfChains.addItem(new Item("EtchedStone",
-                "Carving: 'He who stole the First Flame was bound in chains. "
-                        + "Remember his gift, for fire is the key.'"));
-        crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
+                crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
         registerRooms();
     }
     private Map<String, Room> roomMap = new HashMap<>();
@@ -321,6 +325,18 @@ public class ZorkULGame {
             System.out.println("A wall of cold ash blocks your path. The Ember Altar is dormant.");
             return;
         }
+        if (nextRoom == crucible) {
+            Item stone = player.getItem("EtchedStone");
+            if (stone == null) {
+                System.out.println(
+                        "A barrier of burning air blocks your path.\n" +
+                                "Symbols flash across the obsidian gate.\n" +
+                                "You sense it requires the EtchedStone to pass."
+                );
+                return;
+            }
+        }
+
         player.setCurrentRoom(nextRoom);
         System.out.println(player.getCurrentRoom().getLongDescription());
     }
@@ -410,6 +426,31 @@ public class ZorkULGame {
                 return;
             }
         }
+        // VAULT OF CHAINS PUZZLE
+        if (player.getCurrentRoom() == vaultOfChains && !chainsPuzzleSolved) {
+            if (spoken.equalsIgnoreCase("prometheus")) {
+
+                chainsPuzzleSolved = true;
+
+                System.out.println(
+                        "The chains clatter violently...\n" +
+                                "A hidden compartment opens in the wall.\n" +
+                                "Inside lies an ancient stone tablet."
+                );
+
+                Item etched = new Item("EtchedStone",
+                        "A tablet depicting Prometheus bound to the rock, holding stolen fire.");
+                player.addItem(etched);
+
+                System.out.println("You obtain: EtchedStone.");
+                return;
+
+            } else {
+                System.out.println("Your voice echoes off the iron walls, but nothing happens.");
+                return;
+            }
+        }
+
 
         // SENTINEL FINAL RIDDLE
         if (player.getCurrentRoom() == crucible && !finalRiddleSolved) {
@@ -557,6 +598,10 @@ public class ZorkULGame {
             return;
         }
         System.out.println("You can’t use that here.");
+    }
+    public String getNPCinCurrentRoom() {
+        if (player.getCurrentRoom().getNPCs().isEmpty()) return null;
+        return player.getCurrentRoom().getNPCs().getFirst().getName();
     }
 
     public static void main(String[] args) {

@@ -1,6 +1,10 @@
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Inventory<T extends Item> {
+public class Inventory<T extends Item> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private ArrayList<T> items = new ArrayList<>();
 
     public void add(T item) {

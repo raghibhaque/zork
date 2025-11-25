@@ -1,14 +1,11 @@
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -100,26 +97,47 @@ public class ZorkGUI extends Application {
         buttonGrid.setStyle("-fx-background-color: #111;");
 
         Button northBtn = new Button("North");
+        northBtn.setTooltip(new Tooltip("Move north into the next room"));
+
         Button southBtn = new Button("South");
+        southBtn.setTooltip(new Tooltip("Move south into the next room"));
+
         Button eastBtn = new Button("East");
+        eastBtn.setTooltip(new Tooltip("Move east into the next room"));
+
         Button westBtn = new Button("West");
+        westBtn.setTooltip(new Tooltip("Move west into the next room"));
 
         Button takeBtn = new Button("Take");
+        takeBtn.setTooltip(new Tooltip("Pick up an item in this room"));
+
         Button dropBtn = new Button("Drop");
+        dropBtn.setTooltip(new Tooltip("Drop an item from your inventory"));
+
         Button inventoryBtn = new Button("Inventory");
+        inventoryBtn.setTooltip(new Tooltip("Open your inventory window"));
+
         Button saveBtn = new Button("Save Game");
+        saveBtn.setTooltip(new Tooltip("Save your current game progress"));
+
         Button loadBtn = new Button("Load Game");
+        loadBtn.setTooltip(new Tooltip("Load your previously saved game"));
+
+        Button talkBtn = new Button("Talk");
+        talkBtn.setTooltip(new Tooltip("Talk to the NPC in this room"));
+
 
         buttonGrid.add(northBtn, 1, 0);
         buttonGrid.add(westBtn, 0, 1);
         buttonGrid.add(eastBtn, 2, 1);
         buttonGrid.add(southBtn, 1, 2);
 
-        buttonGrid.add(takeBtn, 0, 3);
-        buttonGrid.add(inventoryBtn, 1, 3);
-        buttonGrid.add(dropBtn, 2, 3);
+        buttonGrid.add(takeBtn, 5, 3);
+        buttonGrid.add(inventoryBtn, 5, 2);
+        buttonGrid.add(dropBtn, 5, 1);
         buttonGrid.add(saveBtn, 3, 3);
         buttonGrid.add(loadBtn, 4, 3);
+        buttonGrid.add(talkBtn, 3, 2);
 
         root.setBottom(buttonGrid);
 
@@ -130,6 +148,15 @@ public class ZorkGUI extends Application {
 
         saveBtn.setOnAction(e -> processCommand("save game"));
         loadBtn.setOnAction(e -> processCommand("load game"));
+
+        talkBtn.setOnAction(e -> {
+            String npcName = game.getNPCinCurrentRoom();
+            if (npcName != null) {
+                processCommand("talk " + npcName);
+            } else {
+                outputArea.appendText("\nThere is no one here to talk to.\n");
+            }
+        });
 
         takeBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
@@ -194,8 +221,12 @@ public class ZorkGUI extends Application {
         outputArea.appendText(game.getPlayerInventory() + "\n");
 
         String roomName = game.getCurrentRoomDescription().toLowerCase();
-
-        if (roomName.contains("embers")) {
+        if (roomName.contains("ashen")) {
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/garden.png")).toExternalForm()
+            ));
+        }
+        else if (roomName.contains("embers")) {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
             ));
@@ -205,11 +236,13 @@ public class ZorkGUI extends Application {
                     Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
             ));
         }
+
         else if (roomName.contains("spire")) {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/spire.png")).toExternalForm()
             ));
         }
+
         else {
             roomImage.setImage(null);
         }
@@ -244,6 +277,8 @@ public class ZorkGUI extends Application {
 
         inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
