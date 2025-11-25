@@ -2,6 +2,10 @@ import javafx.scene.control.TextArea;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +21,15 @@ public class ZorkULGame {
     private Room ironSpire;
     private boolean finalRiddleSolved = false;
     private Room crucible;
+    private Room vaultOfChains;
+
+    // Simple annotation for marking commands
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @interface CommandDescription {
+        String value();
+    }
+
 
     public ZorkULGame() {
         createRooms();
@@ -69,7 +82,7 @@ public class ZorkULGame {
                         This place feels like both a tomb and a beginning."""
         );
 
-        Room vaultOfChains = new Room(
+        vaultOfChains = new Room(
                 "You descend into the Vault of Chains.\n" +
                         "Rusting shackles hang from the ceiling. The scent of iron and smoke fills your lungs.\n" +
                         "On the walls are carvings of a man bound to stone — the punishment of Prometheus."
@@ -78,7 +91,7 @@ public class ZorkULGame {
         hallOfEmbers.setExit("north", chamberOfEchoes);
         chamberOfEchoes.setExit("south", hallOfEmbers);
         ironSpire.setExit("west", chamberOfEchoes);
-        ironSpire.setExit("south", ashenGarden);
+        ironSpire.setExit("north", crucible);
         ashenGarden.setExit("north", ironSpire);
         ashenGarden.setExit("east", vaultOfChains);
         vaultOfChains.setExit("west", ashenGarden);
@@ -124,11 +137,11 @@ public class ZorkULGame {
     private Map<String, Room> roomMap = new HashMap<>();
 
     private void registerRooms() {
-        roomMap.put("hallofembers", hallOfEmbers);
-        roomMap.put("chamberofechoes", chamberOfEchoes);
-        roomMap.put("ironspire", ironSpire);
+        roomMap.put("embers", hallOfEmbers);
+        roomMap.put("echoes", chamberOfEchoes);
+        roomMap.put("iron spire", ironSpire);
         roomMap.put("crucible", crucible);
-        // add all rooms here
+        roomMap.put("chains" , vaultOfChains );
     }
 
 
@@ -287,6 +300,7 @@ public class ZorkULGame {
         System.out.println(player.getInventoryString());
     }
 
+    @CommandDescription("Moves the player to a different room.")
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Go where?");

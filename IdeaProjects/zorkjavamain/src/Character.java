@@ -1,31 +1,25 @@
-import java.util.ArrayList;
 import java.io.*;
+
 public class Character implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     private String name;
     private Room currentRoom;
-    private ArrayList<Item> inventory = new ArrayList<>();
+    private Inventory<Item> inventory = new Inventory<>();
 
     public Character(String name, Room startingRoom) {
         this.name = name;
         this.currentRoom = startingRoom;
     }
 
-    public Character() {
-    }
+    public Character() {}
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public Room getCurrentRoom() {
-        return currentRoom;
-    }
+    public Room getCurrentRoom() { return currentRoom; }
 
-    public void setCurrentRoom(Room room) {
-        this.currentRoom = room;
-    }
+    public void setCurrentRoom(Room room) { this.currentRoom = room; }
 
     public void move(String direction) {
         Room nextRoom = currentRoom.getExit(direction);
@@ -36,6 +30,7 @@ public class Character implements Serializable {
             System.out.println("You can't go that way!");
         }
     }
+
     public void addItem(Item item) {
         inventory.add(item);
     }
@@ -45,23 +40,10 @@ public class Character implements Serializable {
     }
 
     public Item getItem(String itemName) {
-        for (Item i : inventory) {
-            if (i.getName().equalsIgnoreCase(itemName)) {
-                return i;
-            }
-        }
-        return null;
+        return inventory.get(itemName);
     }
 
     public String getInventoryString() {
-        if (inventory.isEmpty()) {
-            return "Your inventory is empty.";
-        }
-
-        StringBuilder sb = new StringBuilder("You are carrying: ");
-        for (Item i : inventory) {
-            sb.append(i.getName()).append(", ");
-        }
-        return sb.substring(0, sb.length() - 2);
+        return inventory.toString();
     }
 }
