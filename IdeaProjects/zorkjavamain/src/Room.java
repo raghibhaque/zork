@@ -104,6 +104,4 @@ public class Room implements Serializable {
         // remove last comma + space
         return sb.substring(0, sb.length() - 2);
     }
-
-
 }

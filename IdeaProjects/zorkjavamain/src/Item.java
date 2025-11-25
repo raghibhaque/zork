@@ -55,5 +55,8 @@ public class Item implements Serializable {
     public void setVisible(boolean visible) {
         isVisible = visible;
     }
+    public void damage(int y){
+        System.out.println("Dealt" + y + "Damage!");
+    }
 }
 

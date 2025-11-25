@@ -2,6 +2,8 @@ import javafx.scene.control.TextArea;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ZorkULGame {
     private Parser parser;
@@ -33,10 +35,11 @@ public class ZorkULGame {
 
     private void createRooms() {
         hallOfEmbers = new Room(
-                "You awaken in the Hall of Embers.\n" +
-                        "The walls flicker faintly with dying torches. Charred murals of gods and flame line the stone.\n" +
-                        "The air is heavy with the scent of ash — and the faint echo of fire long forgotten." +
-                        "Find me the gem and I will give you a pious reward."
+                """
+                        You awaken in the Hall of Embers.
+                        The walls flicker faintly with dying torches. Charred murals of gods and flame line the stone.
+                        The air is heavy with the scent of ash — and the faint echo of fire long forgotten.\
+                        Find me the gem and I will give you a pious reward."""
         );
 
         chamberOfEchoes = new Room(
@@ -46,21 +49,24 @@ public class ZorkULGame {
         );
 
         ironSpire = new Room(
-                "You stand before the Iron Spire.\n" +
-                        "An obsidian tower looms above, its surface etched with glowing runes.\n" +
-                        "The air hums faintly — power dormant, waiting to be awakened."
+                """
+                        You stand before the Iron Spire.
+                        An obsidian tower looms above, its surface etched with glowing runes.
+                        The air hums faintly — power dormant, waiting to be awakened."""
         );
 
         Room ashenGarden = new Room(
-                "You step into the Ashen Garden.\n" +
-                        "What once were trees are now blackened silhouettes. Their roots still pulse faintly with red embers beneath the soil.\n" +
-                        "Something ancient sleeps here, beneath the ash."
+                """
+                        You step into the Ashen Garden.
+                        What once were trees are now blackened silhouettes. Their roots still pulse faintly with red embers beneath the soil.
+                        Something ancient sleeps here, beneath the ash."""
         );
 
         crucible = new Room(
-                "You arrive in the Crucible.\n" +
-                        "A massive forge dominates the center. Blue fire burns without heat — whispering in a forgotten tongue.\n" +
-                        "This place feels like both a tomb and a beginning."
+                """
+                        You arrive in the Crucible.
+                        A massive forge dominates the center. Blue fire burns without heat — whispering in a forgotten tongue.
+                        This place feels like both a tomb and a beginning."""
         );
 
         Room vaultOfChains = new Room(
@@ -95,7 +101,8 @@ public class ZorkULGame {
         hallOfEmbers.addNPC(Orpheon);
         NPC sentinel = new NPC("Sentinel", crucible,
                 "A towering figure of living obsidian guards the inner flame.\n" +
-                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\""
+                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\"7" +
+                        "Defeat me with the Ember Fragment , if you wish to meet your DEMISE."
         );
         crucible.addNPC(sentinel);
 
@@ -112,7 +119,18 @@ public class ZorkULGame {
                 "Carving: 'He who stole the First Flame was bound in chains. "
                         + "Remember his gift, for fire is the key.'"));
         crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
+        registerRooms();
     }
+    private Map<String, Room> roomMap = new HashMap<>();
+
+    private void registerRooms() {
+        roomMap.put("hallofembers", hallOfEmbers);
+        roomMap.put("chamberofechoes", chamberOfEchoes);
+        roomMap.put("ironspire", ironSpire);
+        roomMap.put("crucible", crucible);
+        // add all rooms here
+    }
+
 
     public void play() {
         printWelcome();
@@ -147,6 +165,8 @@ public class ZorkULGame {
             case DROP:
                 dropItem(command);
                 break;
+            case TELEPORT:
+                teleport(command);
             case INVENTORY:
                 System.out.println(player.getInventoryString());
                 break;
@@ -174,6 +194,9 @@ public class ZorkULGame {
             case INVBTN:
                 getInventory();
                 break;
+            case ATTACK:
+                getAttack();
+                break;
 
             case QUIT:
                 if (command.hasSecondWord()) {
@@ -196,6 +219,9 @@ public class ZorkULGame {
         parser.showCommands();
     }
 
+    public void getAttack(){
+        System.out.println("You are alone. You are alone. You are alone.");
+    }
     public String getPlayerInventory() {
         return player.getInventoryString();
     }
@@ -236,10 +262,12 @@ public class ZorkULGame {
         if (npcName.equalsIgnoreCase("Orpheon") && itemName.equalsIgnoreCase("Gem")) {
 
             System.out.println(
-                    "Orpheon takes the Gem into his palm.\n" +
-                            "\"Ah… the Echoing Core,\" he whispers.\n" +
-                            "\"You have done well, Child of Ash. Take this — the Ember Fragment. \n" +
-                            "With it, the old flame remembers you.\"\n"
+                    """
+                            Orpheon takes the Gem into his palm.
+                            "Ah… the Echoing Core," he whispers.
+                            "You have done well, Child of Ash. Take this — the Ember Fragment.\s
+                            With it, the old flame remembers you."
+                            """
             );
 
             player.removeItem(item);
@@ -379,10 +407,10 @@ public class ZorkULGame {
                         "The Sentinel bows its head.\n" +
                                 "\"You speak the truth. Fire was the first gift…\"\n" +
                                 "It extends its hand, revealing a blazing orb.\n" +
-                                "You receive: PrimordialFlame."
+                                "You receive: Primordial Flame."
                 );
 
-                Item flame = new Item("PrimordialFlame",
+                Item flame = new Item("Primordial Flame",
                         "The First Fire — blazing with impossible brilliance.");
                 player.addItem(flame);
 
@@ -407,6 +435,7 @@ public class ZorkULGame {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
             return;
+
         }
 
         String itemName = command.getSecondWord();
@@ -480,6 +509,25 @@ public class ZorkULGame {
             System.out.println("Failed to load save: " + e.getMessage());
         }
     }
+    private void teleport(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Teleport where?");
+            return;
+        }
+
+        String roomName = command.getSecondWord().toLowerCase();
+
+        Room target = roomMap.get(roomName);
+
+        if (target == null) {
+            System.out.println("No such room: " + roomName);
+            return;
+        }
+
+        player.setCurrentRoom(target);
+        System.out.println("You teleport to:");
+        System.out.println(target.getLongDescription());
+    }
 
     private void useItem(Command command) {
         if (!command.hasSecondWord()) {
@@ -488,25 +536,17 @@ public class ZorkULGame {
         }
 
         String itemName = command.getSecondWord().toLowerCase();
-
         if (itemName.equals("torch") && player.getCurrentRoom() == hallOfEmbers) {
-
             hallOfEmbers.igniteAltar();
             System.out.println("The torch flares brightly as you ignite the Ember Altar!");
             System.out.println("The northern gate rumbles open...");
             return;
         }
-
-       // if (itemName.equalsIgnoreCase("Gem") && player.getCurrentRoom()== chamberOfEchoes) {
-      //      System.out.println("*A voice pierces your mind, type in 'XYZ'...");
-      //  }
-
         System.out.println("You can’t use that here.");
-
-
     }
 
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
     }
+
 } // end of class
