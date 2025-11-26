@@ -101,8 +101,8 @@ public class ZorkULGame {
         crucible.setExit("north", vaultOfChains);
         chamberOfEchoes.setExit("east", ashenGarden);
         ashenGarden.setExit("west", chamberOfEchoes);
-       // ironSpire.setExit("north", ashenGarden);
-      //  ashenGarden.setExit("south", ironSpire);
+        // ironSpire.setExit("north", ashenGarden);
+        //  ashenGarden.setExit("south", ironSpire);
 
 
         player = new Character("player", hallOfEmbers);
@@ -135,7 +135,7 @@ public class ZorkULGame {
                         " If you wish the way to open, speak the thing he named to the empty air "
         );
         chamberOfEchoes.addItem(this.note);
-                crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
+        crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
         registerRooms();
     }
     private Map<String, Room> roomMap = new HashMap<>();
@@ -230,7 +230,7 @@ public class ZorkULGame {
         return false;
     }
 
-        private void printHelp() {
+    private void printHelp() {
         System.out.println("You are lost. You are alone. The flame is burning.");
         System.out.print("Your command words are: ");
         parser.showCommands();
