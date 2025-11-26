@@ -226,6 +226,11 @@ public class ZorkGUI extends Application {
                     Objects.requireNonNull(getClass().getResource("/images/garden.png")).toExternalForm()
             ));
         }
+        else if (roomName.contains("vault")) {
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/chains.png")).toExternalForm()
+            ));
+        }
         else if (roomName.contains("embers")) {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()

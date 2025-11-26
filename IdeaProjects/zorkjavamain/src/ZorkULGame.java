@@ -99,9 +99,8 @@ public class ZorkULGame {
         vaultOfChains.setExit("west", ashenGarden);
         vaultOfChains.setExit("south", crucible);
         crucible.setExit("north", vaultOfChains);
-        chamberOfEchoes.setExit("east", ashenGarden);
         ashenGarden.setExit("west", chamberOfEchoes);
-        // ironSpire.setExit("north", ashenGarden);
+        ironSpire.setExit("south", ashenGarden);
         //  ashenGarden.setExit("south", ironSpire);
 
 
@@ -137,7 +136,18 @@ public class ZorkULGame {
         chamberOfEchoes.addItem(this.note);
         crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
         registerRooms();
+
+        NPC Acheron = new NPC ("Acheron", vaultOfChains,
+                        "Acheron follows your every move, silent, patient, waiting." +
+                                "“Say the name of the fire-thief, the one punished by the gods.\n" +
+                                "Only then will my chains break.”"
+        );
+        vaultOfChains.addNPC(Acheron);
     }
+
+
+
+
     private Map<String, Room> roomMap = new HashMap<>();
 
     private void registerRooms() {
@@ -591,6 +601,14 @@ public class ZorkULGame {
         }
 
         String itemName = command.getSecondWord().toLowerCase();
+
+        Item item = player.getItem(itemName);
+        if (item == null) {
+            System.out.println("You don't have a " + itemName + ".");
+            return;
+        }
+
+
         if (itemName.equals("torch") && player.getCurrentRoom() == hallOfEmbers) {
             hallOfEmbers.igniteAltar();
             System.out.println("The torch flares brightly as you ignite the Ember Altar!");
