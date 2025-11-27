@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 import java.util.Optional;
+import javafx.scene.media.AudioClip;
+
 
 public class ZorkGUI extends Application {
 
@@ -20,6 +22,7 @@ public class ZorkGUI extends Application {
     private ImageView roomImage;
     private Stage inventoryStage;
     private boolean inventoryOpen = false;
+    private Button giveBtn;
 
     @Override
     public void start(Stage primaryStage) {
@@ -126,18 +129,25 @@ public class ZorkGUI extends Application {
         Button talkBtn = new Button("Talk");
         talkBtn.setTooltip(new Tooltip("Talk to the NPC in this room"));
 
+        giveBtn = new Button("Give");
+        giveBtn.setTooltip(new Tooltip("Give the Gem to Orpheon"));
 
-        buttonGrid.add(northBtn, 1, 0);
-        buttonGrid.add(westBtn, 0, 1);
-        buttonGrid.add(eastBtn, 2, 1);
-        buttonGrid.add(southBtn, 1, 2);
 
-        buttonGrid.add(takeBtn, 5, 3);
-        buttonGrid.add(inventoryBtn, 5, 2);
-        buttonGrid.add(dropBtn, 5, 1);
-        buttonGrid.add(saveBtn, 3, 3);
-        buttonGrid.add(loadBtn, 4, 3);
-        buttonGrid.add(talkBtn, 3, 2);
+
+        buttonGrid.add(northBtn, 2, 0);
+        buttonGrid.add(westBtn, 1, 1);
+        buttonGrid.add(eastBtn, 3, 1);
+        buttonGrid.add(southBtn, 2, 2);
+
+        buttonGrid.add(giveBtn, 4, 1);
+        buttonGrid.add(talkBtn, 4, 2);
+
+        buttonGrid.add(dropBtn, 6, 0);
+        buttonGrid.add(inventoryBtn, 6, 1);
+        buttonGrid.add(takeBtn, 6, 2);
+
+        buttonGrid.add(saveBtn, 1, 3);
+        buttonGrid.add(loadBtn, 3, 3);
 
         root.setBottom(buttonGrid);
 
@@ -159,13 +169,18 @@ public class ZorkGUI extends Application {
         });
 
         takeBtn.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Take Item");
-            dialog.setHeaderText("Pick up an item");
-            dialog.setContentText("Enter item name:");
-            Optional<String> result = dialog.showAndWait();
-            result.ifPresent(item -> processCommand("take " + item));
-        });
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Take Item");
+                    dialog.setHeaderText("Pick up an item");
+                    dialog.setContentText("Enter item name:");
+                    Optional<String> result = dialog.showAndWait();
+                    result.ifPresent(item -> {
+                        processCommand("take " + item);
+                        playSound("pickup.mp3");
+                    });
+                });
+
+
 
         dropBtn.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
@@ -176,15 +191,29 @@ public class ZorkGUI extends Application {
             result.ifPresent(item -> processCommand("drop " + item));
         });
 
+        giveBtn.setOnAction(e -> processCommand("give Gem Orpheon"));
+
+
         inventoryBtn.setOnAction(e -> toggleInventoryWindow());
 
         Scene scene = new Scene(root, 700, 800);
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W: processCommand("go north"); break;
-                case S: processCommand("go south"); break;
-                case A: processCommand("go west"); break;
-                case D: processCommand("go east"); break;
+                case W:
+                    processCommand("go north");
+                break;
+                case S:
+                    processCommand("go south");
+                break;
+                case A:
+                    processCommand("go west");
+                break;
+                case D:
+                    processCommand("go east");
+                break;
+                case ESCAPE:
+                    javafx.application.Platform.exit();
+                break;
             }
         });
 
@@ -226,6 +255,11 @@ public class ZorkGUI extends Application {
                     Objects.requireNonNull(getClass().getResource("/images/garden.png")).toExternalForm()
             ));
         }
+        else if(roomName.contains("crucible")) {
+            roomImage.setImage(new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/crucible.png")).toExternalForm()
+            ));
+        }
         else if (roomName.contains("vault")) {
             roomImage.setImage(new Image(
                     Objects.requireNonNull(getClass().getResource("/images/chains.png")).toExternalForm()
@@ -251,6 +285,12 @@ public class ZorkGUI extends Application {
         else {
             roomImage.setImage(null);
         }
+        if (playerHasGem()) {
+            giveBtn.setVisible(true);
+        } else {
+            giveBtn.setVisible(false);
+        }
+
     }
 
     private void toggleInventoryWindow() {
@@ -281,6 +321,20 @@ public class ZorkGUI extends Application {
         inventoryOpen = true;
 
         inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
+    }
+    private boolean playerHasGem() {
+        return game.getPlayerInventory().toLowerCase().contains("gem");
+    }
+
+    private void playSound(String fileName) {
+        try {
+            AudioClip clip = new AudioClip(
+                    Objects.requireNonNull(getClass().getResource("/sfx/" + fileName)).toExternalForm()
+            );
+            clip.play();
+        } catch (Exception e) {
+            System.out.println("Sound file not found: " + fileName);
+        }
     }
 
 

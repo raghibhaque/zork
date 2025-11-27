@@ -18,12 +18,11 @@ public class ZorkULGame {
     private Room chamberOfEchoes;
     private Room ashenGarden;
     private Item note;
-    private Item puzzle1;
     private Room ironSpire;
+    private boolean chainsPuzzleSolved = false;
     private boolean finalRiddleSolved = false;
     private Room crucible;
     private Room vaultOfChains;
-    private boolean chainsPuzzleSolved = false;
 
 
     // Simple annotation for marking commands
@@ -108,19 +107,21 @@ public class ZorkULGame {
 
 
         NPC Orpheon = new NPC("Orpheon", hallOfEmbers,
-                "\"Ah… you wake at last, Child of Ash.\n" +
-                        "\n" +
-                        "This hall once blazed with the fire of Prometheus,\n" +
-                        "but the Ember Altar has grown cold.\n" +
-                        "Without its flame, the northern gate will never open.\n" +
-                        "\n" +
-                        "Take the Torch — the last spark still loyal to mankind —\n" +
-                        "and ignite the altar. Only then will the path ahead answer you.\"\n"
+                """
+                        "Ah… you wake at last, Child of Ash.
+                        
+                        This hall once blazed with the fire of Prometheus,
+                        but the Ember Altar has grown cold.
+                        Without its flame, the northern gate will never open.
+                        
+                        Take the Torch — the last spark still loyal to mankind —
+                        and ignite the altar. Only then will the path ahead answer you."
+                        """
         );
         hallOfEmbers.addNPC(Orpheon);
         NPC sentinel = new NPC("Sentinel", crucible,
                 "A towering figure of living obsidian guards the inner flame.\n" +
-                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\"7" +
+                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\"" +
                         "Defeat me with the Ember Fragment , if you wish to meet your DEMISE."
         );
         crucible.addNPC(sentinel);
@@ -154,6 +155,9 @@ public class ZorkULGame {
         roomMap.put("embers", hallOfEmbers);
         roomMap.put("echoes", chamberOfEchoes);
         roomMap.put("iron spire", ironSpire);
+        roomMap.put("iron", ironSpire);
+        roomMap.put("ironspire", ironSpire);
+        roomMap.put("spire", ironSpire);
         roomMap.put("crucible", crucible);
         roomMap.put("chains" , vaultOfChains );
     }
@@ -194,6 +198,7 @@ public class ZorkULGame {
                 break;
             case TELEPORT:
                 teleport(command);
+                break;
             case INVENTORY:
                 System.out.println(player.getInventoryString());
                 break;
@@ -299,7 +304,7 @@ public class ZorkULGame {
 
             player.removeItem(item);
 
-            Item emberFragment = new Item("EmberFragment",
+            Item emberFragment = new Item("Ember Fragment",
                     "A glowing shard of primordial fire. Warm, alive, and waiting.");
             player.addItem(emberFragment);
 
@@ -336,12 +341,12 @@ public class ZorkULGame {
             return;
         }
         if (nextRoom == crucible) {
-            Item stone = player.getItem("EtchedStone");
+            Item stone = player.getItem("Ember Fragment");
             if (stone == null) {
                 System.out.println(
                         "A barrier of burning air blocks your path.\n" +
                                 "Symbols flash across the obsidian gate.\n" +
-                                "You sense it requires the EtchedStone to pass."
+                                "You sense it requires the Ember Fragment to pass."
                 );
                 return;
             }
@@ -400,7 +405,7 @@ public class ZorkULGame {
 
         for (NPC npc : currentRoom.getNPCs()) {
             if (npc.getName().equalsIgnoreCase(npcName)) {
-                npc.speak(null);  // force console output
+                System.out.println(npc.speak());
                 return;
             }
         }
@@ -438,7 +443,7 @@ public class ZorkULGame {
         }
         // VAULT OF CHAINS PUZZLE
         if (player.getCurrentRoom() == vaultOfChains && !chainsPuzzleSolved) {
-            if (spoken.equalsIgnoreCase("prometheus")) {
+             if (spoken.equalsIgnoreCase("prometheus")) {
 
                 chainsPuzzleSolved = true;
 
@@ -448,11 +453,12 @@ public class ZorkULGame {
                                 "Inside lies an ancient stone tablet."
                 );
 
-                Item etched = new Item("EtchedStone",
-                        "A tablet depicting Prometheus bound to the rock, holding stolen fire.");
+                Item etched = new Item("Etched Stone",
+                        "A tablet depicting Prometheus bound to the rock, holding stolen fire." +
+                                "You sense it may be important...");
                 player.addItem(etched);
 
-                System.out.println("You obtain: EtchedStone.");
+                System.out.println("You obtain: Etched Stone.");
                 return;
 
             } else {
@@ -486,7 +492,9 @@ public class ZorkULGame {
                                 "You have restored the Primordial Flame.\n" +
                                 "The age of ash is over.\n\n" +
                                 "*** YOU WIN ***"
+
                 );
+                javafx.application.Platform.exit();
                 return;
 
             } else {
