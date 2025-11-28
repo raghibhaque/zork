@@ -151,10 +151,20 @@ public class ZorkGUI extends Application {
 
         root.setBottom(buttonGrid);
 
-        northBtn.setOnAction(e -> processCommand("go north"));
-        southBtn.setOnAction(e -> processCommand("go south"));
-        eastBtn.setOnAction(e -> processCommand("go east"));
-        westBtn.setOnAction(e -> processCommand("go west"));
+        northBtn.setOnAction(e ->{ processCommand("go north");
+            playSound("move.mp3");
+                });
+        southBtn.setOnAction(e -> {processCommand("go south");
+            playSound("move.mp3");
+                });
+        eastBtn.setOnAction(e -> {
+                    processCommand("go east");
+                    playSound("move.mp3");
+                });
+        westBtn.setOnAction(e -> {
+                    processCommand("go west");
+                    playSound("move.mp3");
+                });
 
         saveBtn.setOnAction(e -> processCommand("save game"));
         loadBtn.setOnAction(e -> processCommand("load game"));
