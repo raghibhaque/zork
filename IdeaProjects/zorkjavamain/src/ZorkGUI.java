@@ -23,6 +23,9 @@ public class ZorkGUI extends Application {
     private Stage inventoryStage;
     private boolean inventoryOpen = false;
     private Button giveBtn;
+    private Button useBtn;
+
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -132,6 +135,10 @@ public class ZorkGUI extends Application {
         giveBtn = new Button("Give");
         giveBtn.setTooltip(new Tooltip("Give the Gem to Orpheon"));
 
+        useBtn = new Button("Use");
+        useBtn.setTooltip(new Tooltip("Use an item such as the Torch"));
+
+
 
 
         buttonGrid.add(northBtn, 2, 0);
@@ -145,6 +152,7 @@ public class ZorkGUI extends Application {
         buttonGrid.add(dropBtn, 6, 0);
         buttonGrid.add(inventoryBtn, 6, 1);
         buttonGrid.add(takeBtn, 6, 2);
+        buttonGrid.add(useBtn, 6, 3);
 
         buttonGrid.add(saveBtn, 1, 3);
         buttonGrid.add(loadBtn, 3, 3);
@@ -178,6 +186,8 @@ public class ZorkGUI extends Application {
             }
         });
 
+
+
         takeBtn.setOnAction(e -> {
                     TextInputDialog dialog = new TextInputDialog();
                     dialog.setTitle("Take Item");
@@ -205,6 +215,9 @@ public class ZorkGUI extends Application {
 
 
         inventoryBtn.setOnAction(e -> toggleInventoryWindow());
+
+        useBtn.setOnAction(e -> processCommand("use torch"));
+
 
         Scene scene = new Scene(root, 700, 800);
         scene.setOnKeyPressed(event -> {
@@ -304,8 +317,15 @@ public class ZorkGUI extends Application {
         } else {
             giveBtn.setVisible(false);
         }
+        if (playerHasTorch()) {
+            useBtn.setVisible(true);
+        } else {
+            useBtn.setVisible(false);
+        }
+
 
     }
+
 
     private void toggleInventoryWindow() {
         if (inventoryOpen && inventoryStage != null) {
@@ -339,6 +359,11 @@ public class ZorkGUI extends Application {
     private boolean playerHasGem() {
         return game.getPlayerInventory().toLowerCase().contains("gem");
     }
+
+    private boolean playerHasTorch() {
+        return game.getPlayerInventory().toLowerCase().contains("torch");
+    }
+
 
     private void playSound(String fileName) {
         try {
