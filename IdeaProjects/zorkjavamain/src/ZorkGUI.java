@@ -248,6 +248,10 @@ public class ZorkGUI extends Application {
         String w3 = words.length > 2 ? words[2] : null;
 
         CommandWord cw = new CommandWords().getCommandWord(w1);
+        if (w1.equalsIgnoreCase("take")) {
+            playSound("pickup.mp3");
+        }
+
         cmd = new Command(cw, w2, w3);
 
         game.processCommand(cmd);

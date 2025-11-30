@@ -172,6 +172,34 @@ public class ZorkULGame {
                                 "Only then will my chains break.”"
         );
         vaultOfChains.addNPC(Acheron);
+
+        NPC Sylpha = new NPC(
+                "Sylpha",
+                ashenGarden,
+                """
+                A faint figure forms among the ashen trees — neither alive nor dead.
+                Her voice is soft, carried by the smoldering wind.
+                
+                "You carry embers of purpose, wanderer… but embers alone are not enough."
+                
+                Her outline flickers like smoke.
+                
+                "The path you seek ends in the Crucible. There, truth is stripped bare,
+                and only one answer can wake the First Flame."
+                
+                A pause… almost sorrow.
+                
+                "Be warned. Those who speak falsely are not merely wrong — 
+                the Crucible judges intent, and its judgment is… absolute."
+                
+                She fades, ember by ember.
+                
+                "Go with caution, Child of Ash. The Flame remembers everything."
+                """
+        );
+        ashenGarden.addNPC(Sylpha);
+
+
     }
 
 
@@ -498,6 +526,7 @@ public class ZorkULGame {
 
         // SENTINEL FINAL RIDDLE
         if (player.getCurrentRoom() == crucible && !finalRiddleSolved) {
+
             if (spoken.equals("fire")) {
 
                 finalRiddleSolved = true;
@@ -521,11 +550,12 @@ public class ZorkULGame {
                                 "The age of ash is over.\n\n" +
                                 "*** YOU WIN ***"
                 );
+
                 javafx.application.Platform.exit();
                 return;
-
             }
-        } else {
+
+            // WRONG ANSWER
             sentinelFailCount++;
 
             if (sentinelFailCount == 1) {
