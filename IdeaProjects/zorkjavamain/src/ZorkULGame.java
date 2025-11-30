@@ -98,7 +98,6 @@ public class ZorkULGame {
         vaultOfChains.setExit("west", ashenGarden);
         vaultOfChains.setExit("south", crucible);
         crucible.setExit("north", vaultOfChains);
-        ashenGarden.setExit("west", chamberOfEchoes);
         ironSpire.setExit("south", ashenGarden);
         //  ashenGarden.setExit("south", ironSpire);
 
