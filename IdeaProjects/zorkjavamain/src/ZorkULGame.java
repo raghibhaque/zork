@@ -126,6 +126,31 @@ public class ZorkULGame {
         );
         crucible.addNPC(sentinel);
 
+        NPC Ferrus = new NPC(
+                "Ferrus",
+                ironSpire,
+                """
+                A towering figure of cracked iron leans against the runed wall.
+                Its voice grinds like metal on stone.
+       \s
+                "The path you walk... it does not stretch forever, wanderer.
+                All roads of ash and ember narrow toward one place."
+       \s
+                Its single ember-eye flickers weakly.
+       \s
+                "The Crucible waits.\s
+                The First Flame sleeps inside it, but not peacefully.
+                What you carry… what you *will* carry… will decide whether it wakes or dies."
+       \s
+                The figure lowers its head, as if already mourning.
+       \s
+                "Go when you are ready.\s
+                But know this—no one returns unchanged from the Crucible."
+               \s"""
+        );
+        ironSpire.addNPC(Ferrus);
+
+
         hallOfEmbers.addItem(new Item("torch", "A weakly burning torch — the last flame of Prometheus."));
 
         chamberOfEchoes.addItem(new Item("Gem", "The trapped gold veins evoke the image of caged fire."));
