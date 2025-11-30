@@ -23,6 +23,7 @@ public class ZorkULGame {
     private boolean finalRiddleSolved = false;
     private Room crucible;
     private Room vaultOfChains;
+    private int sentinelFailCount = 0;
 
 
     // Simple annotation for marking commands
@@ -113,20 +114,23 @@ public class ZorkULGame {
                         but the Ember Altar has grown cold.
                         Without its flame, the northern gate will never open.
                         
-                        Take the Torch — the last spark still loyal to mankind —
-                        and ignite the altar. Only then will the path ahead answer you."
+                        Take the Torch , the last spark still loyal to mankind.
+                        Ignite the altar. Only then will the path ahead answer you."
                         """
         );
         hallOfEmbers.addNPC(Orpheon);
         NPC sentinel = new NPC("Sentinel", crucible,
-                "A towering figure of living obsidian guards the inner flame.\n" +
-                        "\"Speak the truth, wanderer. The First Fire answers only to the wise.\"" +
-                        "Defeat me with the Ember Fragment , if you wish to meet your DEMISE."
+                """
+                "A towering figure of living obsidian guards the inner flame.
+                Speak the truth, wanderer. The First Fire bends only to those who understand it.
+                The forge dims around you.
+                "You have three chances. On the fourth… you will burn as all false prophets do."
+                """
         );
         crucible.addNPC(sentinel);
 
-        NPC Ferrus = new NPC(
-                "Ferrus",
+        NPC Pyrrak = new NPC(
+                "Pyrrak",
                 ironSpire,
                 """
                 A towering figure of cracked iron leans against the runed wall.
@@ -147,7 +151,7 @@ public class ZorkULGame {
                 But know this—no one returns unchanged from the Crucible."
                \s"""
         );
-        ironSpire.addNPC(Ferrus);
+        ironSpire.addNPC(Pyrrak);
 
 
         hallOfEmbers.addItem(new Item("torch", "A weakly burning torch — the last flame of Prometheus."));
@@ -467,7 +471,7 @@ public class ZorkULGame {
         }
         // VAULT OF CHAINS PUZZLE
         if (player.getCurrentRoom() == vaultOfChains && !chainsPuzzleSolved) {
-             if (spoken.equalsIgnoreCase("prometheus")) {
+            if (spoken.equalsIgnoreCase("prometheus")) {
 
                 chainsPuzzleSolved = true;
 
@@ -516,19 +520,41 @@ public class ZorkULGame {
                                 "You have restored the Primordial Flame.\n" +
                                 "The age of ash is over.\n\n" +
                                 "*** YOU WIN ***"
-
                 );
                 javafx.application.Platform.exit();
                 return;
 
-            } else {
-                System.out.println("The Sentinel's eyes narrow. \"That is not the truth.\"");
+            }
+        } else {
+            sentinelFailCount++;
+
+            if (sentinelFailCount == 1) {
+                System.out.println("The Sentinel's eyes narrow. \"Think carefully, wanderer.\"");
+                return;
+            }
+
+            if (sentinelFailCount == 2) {
+                System.out.println("The Sentinel's flame flickers violently. \"Your ignorance grows… dangerous.\"");
+                return;
+            }
+
+            if (sentinelFailCount >= 3) {
+                System.out.println(
+                        "The Crucible falls silent.\n" +
+                                "The Sentinel steps forward.\n" +
+                                "\"Enough.\"\n\n" +
+                                "A blade of molten obsidian cleaves the air.\n" +
+                                "Heat and shadow swallow you whole.\n\n" +
+                                "*** YOU HAVE LOST ***"
+                );
+
+                javafx.application.Platform.exit();
                 return;
             }
         }
     }
 
-    private void dropItem(Command command) {
+        private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
             return;
@@ -567,18 +593,15 @@ public class ZorkULGame {
             return;
         }
 
-        switch (itemName.toLowerCase()) {
-            case "note":
-                System.out.println(
-                        "The note unfurls by itself...\n" +
-                                "A whisper crawls across the chamber:\n\n" +
-                                "\"That which is bound to stone, yet yearns forever skyward...\"\n" +
-                                "\"Speak its name to the hollow air, and the path will open.\""
-                );
-                break;
-            default:
-                System.out.println("There's nothing written on that.");
-                break;
+        if (itemName.toLowerCase().equals("note")) {
+            System.out.println(
+                    "The note unfurls by itself...\n" +
+                            "A whisper crawls across the chamber:\n\n" +
+                            "\"That which is bound to stone, yet yearns forever skyward...\"\n" +
+                            "\"Speak its name to the hollow air, and the path will open.\""
+            );
+        } else {
+            System.out.println("There's nothing written on that.");
         }
     }
 
@@ -650,7 +673,8 @@ public class ZorkULGame {
         System.out.println("You can’t use that here.");
     }
     public String getNPCinCurrentRoom() {
-        if (player.getCurrentRoom().getNPCs().isEmpty()) return null;
+        if (player.getCurrentRoom().getNPCs().isEmpty())
+            return null;
         return player.getCurrentRoom().getNPCs().getFirst().getName();
     }
 
