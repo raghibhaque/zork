@@ -482,6 +482,29 @@ public class ZorkULGame {
 
         String spoken = command.getSecondWord().toLowerCase();
 
+
+        if(spoken.equals("admin")) {
+            System.out.println("Prometheus loves cheaters.");
+            player.addItem(new Item("Gem", "Admin generated"));
+            player.addItem(new Item("Ember Fragment", "Admin generated"));
+            player.addItem(new Item("Etched Stone", "Admin generated"));
+            player.addItem(new Item("Primordial Flame", "Admin generated"));
+
+
+            hallOfEmbers.setExit("north", chamberOfEchoes);
+            chamberOfEchoes.setExit("east", ironSpire);
+            ironSpire.setExit("south", ashenGarden);
+            ashenGarden.setExit("east", vaultOfChains);
+            vaultOfChains.setExit("south", crucible);
+            crucible.setExit("north", vaultOfChains);
+
+            hallOfEmbers.igniteAltar();
+            chainsPuzzleSolved = true;
+            echoPuzzleSolved = true;
+
+            return;
+        }
+
         // First Riddle w/ gem
         if (player.getCurrentRoom() == chamberOfEchoes && !echoPuzzleSolved) {
             if (spoken.equals("chain")) {
@@ -702,8 +725,6 @@ public class ZorkULGame {
             System.out.println("The torch flares brightly as you ignite the Ember Altar!");
             System.out.println("The northern gate rumbles open...");
             player.removeItem(item);
-            player.getCurrentRoom().addItem(item);
-            item.setLocation(player.getCurrentRoom().getDescription());
             return;
         }
         System.out.println("You can’t use that here.");

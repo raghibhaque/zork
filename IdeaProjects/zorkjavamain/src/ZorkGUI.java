@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,6 +14,8 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.scene.media.AudioClip;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 
 
 public class ZorkGUI extends Application {
@@ -85,6 +88,7 @@ public class ZorkGUI extends Application {
         });
 
         VBox topBox = new VBox(5);
+        VBox.setMargin(imageBar, new Insets(20, 0, 0, 0));
         topBox.setAlignment(Pos.CENTER);
 
         // *** DARK TOP BAR ***
@@ -276,6 +280,13 @@ public class ZorkGUI extends Application {
         outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
 
+
+        DropShadow glow = new DropShadow();
+        glow.setRadius(25);          // blur size
+        glow.setSpread(0.4);         // intensity
+        glow.setColor(Color.web("#ff7b00"));
+        roomImage.setEffect(glow);
+
         String roomName = game.getCurrentRoomDescription().toLowerCase();
         if (roomName.contains("ashen")) {
             roomImage.setImage(new Image(
@@ -314,7 +325,8 @@ public class ZorkGUI extends Application {
         }
         if (playerHasGem()) {
             giveBtn.setVisible(true);
-        } else {
+        }
+        else {
             giveBtn.setVisible(false);
         }
         if (playerHasTorch()) {
