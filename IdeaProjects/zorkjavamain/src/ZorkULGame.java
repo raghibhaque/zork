@@ -108,16 +108,23 @@ public class ZorkULGame {
 
         NPC Orpheon = new NPC("Orpheon", hallOfEmbers,
                 """
-                        "Ah… you wake at last, Child of Ash.
-                        
-                        This hall once blazed with the fire of Prometheus,
-                        but the Ember Altar has grown cold.
-                        Without its flame, the northern gate will never open.
-                        
-                        Take the Torch , the last spark still loyal to mankind.
-                        Ignite the altar. Only then will the path ahead answer you."
-                        """
+                "Ah… you wake at last, Child of Ash.
+        
+                This hall once blazed with the fire of Prometheus,
+                but its heart has gone cold. The Ember Altar lies dormant,
+                and with it, the northern gate remains sealed.
+        
+                Take the Torch — the last loyal spark of mankind.
+                Only a true flame can stir the altar back to life.
+        
+                And listen well,
+        
+                Beyond this chamber lies the Chamber of Echoes.
+                Within its walls rests a stolen glimmer — a gem touched by ancient fire.
+                Bring it to me, and the flame will remember your name."
+                """
         );
+
         hallOfEmbers.addNPC(Orpheon);
         NPC sentinel = new NPC("Sentinel", crucible,
                 """
@@ -397,16 +404,25 @@ public class ZorkULGame {
             return;
         }
         if (nextRoom == crucible) {
-            Item stone = player.getItem("Ember Fragment");
-            if (stone == null) {
+
+            Item fragment = player.getItem("Ember Fragment");
+            Item stone = player.getItem("Etched Stone");
+
+            if (fragment == null || stone == null) {
                 System.out.println(
                         "A barrier of burning air blocks your path.\n" +
                                 "Symbols flash across the obsidian gate.\n" +
-                                "You sense it requires the Ember Fragment to pass."
+                                "It seems to respond only to those who carry BOTH:\n" +
+                                " - The Ember Fragment\n" +
+
+
+
+                                " - The Etched Stone"
                 );
                 return;
             }
         }
+
 
         player.setCurrentRoom(nextRoom);
         System.out.println(player.getCurrentRoom().getLongDescription());
@@ -435,19 +451,6 @@ public class ZorkULGame {
             item.setLocation("inventory");
             System.out.println("You picked up the " + item.getName() + ".");
         }
-
-        if (itemName.equals("Gem") && player.getCurrentRoom() == chamberOfEchoes) {
-            System.out.println(
-                    "A tarnished old note falls on the ground.\n" +
-                            "It unfurls by itself, whispering:\n" +
-                            "\"That which is bound to stone, yet yearns forever skyward...\n" +
-                            "Speak its name to the hollow air, and the path will open.\""
-            );
-
-            note.setVisible(true);
-            System.out.println(player.getCurrentRoom().getLongDescription());
-        }
-
     }
 
     private void talkToNPC(Command command) {
@@ -698,6 +701,9 @@ public class ZorkULGame {
             hallOfEmbers.igniteAltar();
             System.out.println("The torch flares brightly as you ignite the Ember Altar!");
             System.out.println("The northern gate rumbles open...");
+            player.removeItem(item);
+            player.getCurrentRoom().addItem(item);
+            item.setLocation(player.getCurrentRoom().getDescription());
             return;
         }
         System.out.println("You can’t use that here.");
