@@ -61,7 +61,8 @@ public class ZorkULGame {
         chamberOfEchoes = new Room(
                 "You enter the Chamber of Echoes.\n" +
                         "The sound of your footsteps repeats endlessly. Whispered voices murmur truths and lies alike.\n" +
-                        "You feel as though the walls themselves are listening. The shiny ruby glimmers among the generations of skulls."
+                        "You feel as though the walls themselves are listening. The shiny ruby glimmers among the generations of skulls." +
+                        "The note strikes your eyes."
         );
 
         ironSpire = new Room(
