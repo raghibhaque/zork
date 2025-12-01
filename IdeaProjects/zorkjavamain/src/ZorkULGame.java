@@ -290,9 +290,7 @@ public class ZorkULGame {
             case INVBTN:
                 getInventory();
                 break;
-            case ATTACK:
-                getAttack();
-                break;
+
 
             case QUIT:
                 if (command.hasSecondWord()) {
@@ -315,9 +313,6 @@ public class ZorkULGame {
         parser.showCommands();
     }
 
-    public void getAttack(){
-        System.out.println("You are alone. You are alone. You are alone.");
-    }
     public String getPlayerInventory() {
         return player.getInventoryString();
     }
@@ -662,12 +657,29 @@ public class ZorkULGame {
 
     public void saveGame() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
-            out.writeObject(player);
+
+            GameState state = new GameState();
+            state.player = player;
+            state.chainsPuzzleSolved = chainsPuzzleSolved;
+            state.echoPuzzleSolved = echoPuzzleSolved;
+            state.finalRiddleSolved = finalRiddleSolved;
+            state.sentinelFailCount = sentinelFailCount;
+
+            state.hallOfEmbers = hallOfEmbers;
+            state.chamberOfEchoes = chamberOfEchoes;
+            state.ashenGarden = ashenGarden;
+            state.ironSpire = ironSpire;
+            state.vaultOfChains = vaultOfChains;
+            state.crucible = crucible;
+
+            out.writeObject(state);
             System.out.println("Game saved.");
+
         } catch (IOException e) {
-            System.out.println("Auto-save failed: " + e.getMessage());
+            System.out.println("Save failed: " + e.getMessage());
         }
     }
+
 
     public void loadGameIfExists() {
         File f = new File(SAVE_FILE);
@@ -677,13 +689,50 @@ public class ZorkULGame {
         }
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVE_FILE))) {
-            player = (Character) in.readObject();
-            System.out.println("Game loaded automatically.");
+
+            GameState state = (GameState) in.readObject();
+
+            player = state.player;
+            chainsPuzzleSolved = state.chainsPuzzleSolved;
+            echoPuzzleSolved = state.echoPuzzleSolved;
+            finalRiddleSolved = state.finalRiddleSolved;
+            sentinelFailCount = state.sentinelFailCount;
+
+            hallOfEmbers = state.hallOfEmbers;
+            chamberOfEchoes = state.chamberOfEchoes;
+            ashenGarden = state.ashenGarden;
+            ironSpire = state.ironSpire;
+            vaultOfChains = state.vaultOfChains;
+            crucible = state.crucible;
+
+            rebuildRoomConnections();
+
+            System.out.println("Game loaded.");
             System.out.println(player.getCurrentRoom().getLongDescription());
+
         } catch (Exception e) {
             System.out.println("Failed to load save: " + e.getMessage());
         }
     }
+
+
+    private void rebuildRoomConnections() {
+        hallOfEmbers.setExit("north", chamberOfEchoes);
+        chamberOfEchoes.setExit("south", hallOfEmbers);
+        ironSpire.setExit("west", chamberOfEchoes);
+        ashenGarden.setExit("north", ironSpire);
+        ashenGarden.setExit("east", vaultOfChains);
+        vaultOfChains.setExit("west", ashenGarden);
+        vaultOfChains.setExit("south", crucible);
+        crucible.setExit("north", vaultOfChains);
+        ironSpire.setExit("south", ashenGarden);
+
+        // if puzzle solved → also restore extra exits
+        if (echoPuzzleSolved)
+            chamberOfEchoes.setExit("east", ironSpire);
+    }
+
+
     private void teleport(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Teleport where?");
@@ -733,6 +782,21 @@ public class ZorkULGame {
             return null;
         return player.getCurrentRoom().getNPCs().getFirst().getName();
     }
+
+    public static class GameState implements Serializable {
+        public Character player;
+        public boolean chainsPuzzleSolved;
+        public boolean echoPuzzleSolved;
+        public boolean finalRiddleSolved;
+        public int sentinelFailCount;
+        public Room hallOfEmbers;
+        public Room chamberOfEchoes;
+        public Room ashenGarden;
+        public Room ironSpire;
+        public Room vaultOfChains;
+        public Room crucible;
+    }
+
 
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
