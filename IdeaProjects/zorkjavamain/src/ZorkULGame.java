@@ -614,9 +614,7 @@ public class ZorkULGame {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what?");
             return;
-
         }
-
         String itemName = command.getSecondWord();
         Item item = player.getItem(itemName);
 
@@ -649,7 +647,7 @@ public class ZorkULGame {
             return;
         }
 
-        if (itemName.toLowerCase().equals("note")) {
+        if (itemName.equalsIgnoreCase("note")) {
             System.out.println(
                     "The note unfurls by itself...\n" +
                             "A whisper crawls across the chamber:\n\n" +
