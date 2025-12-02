@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,8 +13,6 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.scene.media.AudioClip;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.paint.Color;
 
 
 public class ZorkGUI extends Application {
@@ -33,7 +30,6 @@ public class ZorkGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         outputArea = new TextArea();
-        ConsoleToGUI.redirectSystemOut(outputArea);
         outputArea.setEditable(false);
         outputArea.setWrapText(true);
 
@@ -89,7 +85,6 @@ public class ZorkGUI extends Application {
         });
 
         VBox topBox = new VBox(5);
-        VBox.setMargin(imageBar, new Insets(20, 0, 0, 0));
         topBox.setAlignment(Pos.CENTER);
 
         // *** DARK TOP BAR ***
@@ -166,18 +161,18 @@ public class ZorkGUI extends Application {
 
         northBtn.setOnAction(e ->{ processCommand("go north");
             playSound("move.mp3");
-                });
+        });
         southBtn.setOnAction(e -> {processCommand("go south");
             playSound("move.mp3");
-                });
+        });
         eastBtn.setOnAction(e -> {
-                    processCommand("go east");
-                    playSound("move.mp3");
-                });
+            processCommand("go east");
+            playSound("move.mp3");
+        });
         westBtn.setOnAction(e -> {
-                    processCommand("go west");
-                    playSound("move.mp3");
-                });
+            processCommand("go west");
+            playSound("move.mp3");
+        });
 
         saveBtn.setOnAction(e -> processCommand("save game"));
         loadBtn.setOnAction(e -> processCommand("load game"));
@@ -194,16 +189,16 @@ public class ZorkGUI extends Application {
 
 
         takeBtn.setOnAction(e -> {
-                    TextInputDialog dialog = new TextInputDialog();
-                    dialog.setTitle("Take Item");
-                    dialog.setHeaderText("Pick up an item");
-                    dialog.setContentText("Enter item name:");
-                    Optional<String> result = dialog.showAndWait();
-                    result.ifPresent(item -> {
-                        processCommand("take " + item);
-                        playSound("pickup.mp3");
-                    });
-                });
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Take Item");
+            dialog.setHeaderText("Pick up an item");
+            dialog.setContentText("Enter item name:");
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(item -> {
+                processCommand("take " + item);
+                playSound("pickup.mp3");
+            });
+        });
 
 
 
@@ -229,19 +224,19 @@ public class ZorkGUI extends Application {
             switch (event.getCode()) {
                 case W:
                     processCommand("go north");
-                break;
+                    break;
                 case S:
                     processCommand("go south");
-                break;
+                    break;
                 case A:
                     processCommand("go west");
-                break;
+                    break;
                 case D:
                     processCommand("go east");
-                break;
+                    break;
                 case ESCAPE:
                     javafx.application.Platform.exit();
-                break;
+                    break;
             }
         });
 
@@ -277,14 +272,9 @@ public class ZorkGUI extends Application {
     }
 
     private void displayGameState() {
-
-
-
-        DropShadow glow = new DropShadow();
-        glow.setRadius(25);          // blur size
-        glow.setSpread(0.4);         // intensity
-        glow.setColor(Color.web("#ff7b00"));
-        roomImage.setEffect(glow);
+        outputArea.clear();
+        outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
+        outputArea.appendText(game.getPlayerInventory() + "\n");
 
         String roomName = game.getCurrentRoomDescription().toLowerCase();
         if (roomName.contains("ashen")) {
@@ -324,8 +314,7 @@ public class ZorkGUI extends Application {
         }
         if (playerHasGem()) {
             giveBtn.setVisible(true);
-        }
-        else {
+        } else {
             giveBtn.setVisible(false);
         }
         if (playerHasTorch()) {

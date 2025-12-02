@@ -48,7 +48,7 @@ public class Room implements Serializable {
     }
 
     public String getLongDescription() {
-        return " " + description + ".\n"
+        return description + "\n"
                 + getItemString() + "\n"
                 + getNPCString() + "\n"
                 + "Exits: " + getExitString();
