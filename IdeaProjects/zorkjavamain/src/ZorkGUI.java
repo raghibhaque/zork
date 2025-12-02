@@ -33,6 +33,7 @@ public class ZorkGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         outputArea = new TextArea();
+        ConsoleToGUI.redirectSystemOut(outputArea);
         outputArea.setEditable(false);
         outputArea.setWrapText(true);
 
@@ -276,9 +277,7 @@ public class ZorkGUI extends Application {
     }
 
     private void displayGameState() {
-        outputArea.clear();
-        outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
-        outputArea.appendText(game.getPlayerInventory() + "\n");
+
 
 
         DropShadow glow = new DropShadow();

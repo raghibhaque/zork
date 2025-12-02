@@ -673,7 +673,7 @@ public class ZorkULGame {
             state.crucible = crucible;
 
             out.writeObject(state);
-            System.out.println("Game saved.");
+            System.out.println("Game saved successfully.");
 
         } catch (IOException e) {
             System.out.println("Save failed: " + e.getMessage());

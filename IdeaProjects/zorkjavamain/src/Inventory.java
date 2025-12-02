@@ -17,7 +17,8 @@ public class Inventory<T extends Item> implements Serializable {
 
     public boolean contains(String name) {
         for (T item : items) {
-            if (item.getName().equalsIgnoreCase(name)) return true;
+            if (item.getName().equalsIgnoreCase(name))
+                return true;
         }
         return false;
     }
