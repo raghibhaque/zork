@@ -109,31 +109,31 @@ public class ZorkULGame {
 
         NPC Orpheon = new NPC("Orpheon", hallOfEmbers,
                 """
-                "Ah… you wake at last, Child of Ash.
-        
-                This hall once blazed with the fire of Prometheus,
-                but its heart has gone cold. The Ember Altar lies dormant,
-                and with it, the northern gate remains sealed.
-        
-                Take the Torch — the last loyal spark of mankind.
-                Only a true flame can stir the altar back to life.
-        
-                And listen well,
-        
-                Beyond this chamber lies the Chamber of Echoes.
-                Within its walls rests a stolen glimmer — a gem touched by ancient fire.
-                Bring it to me, and the flame will remember your name."
-                """
+                        "Ah… you wake at last, Child of Ash.
+                        
+                        This hall once blazed with the fire of Prometheus,
+                        but its heart has gone cold. The Ember Altar lies dormant,
+                        and with it, the northern gate remains sealed.
+                        
+                        Take the Torch — the last loyal spark of mankind.
+                        Only a true flame can stir the altar back to life.
+                        
+                        And listen well,
+                        
+                        Beyond this chamber lies the Chamber of Echoes.
+                        Within its walls rests a stolen glimmer — a gem touched by ancient fire.
+                        Bring it to me, and the flame will remember your name."
+                        """
         );
 
         hallOfEmbers.addNPC(Orpheon);
         NPC sentinel = new NPC("Sentinel", crucible,
                 """
-                "A towering figure of living obsidian guards the inner flame.
-                Speak the truth, wanderer. The First Fire bends only to those who understand it.
-                The forge dims around you.
-                "You have three chances. On the fourth… you will burn as all false prophets do."
-                """
+                        "A towering figure of living obsidian guards the inner flame.
+                        Speak the truth, wanderer. The First Fire bends only to those who understand it.
+                        The forge dims around you.
+                        "You have three chances. On the fourth… you will burn as all false prophets do."
+                        """
         );
         crucible.addNPC(sentinel);
 
@@ -141,23 +141,23 @@ public class ZorkULGame {
                 "Pyrrak",
                 ironSpire,
                 """
-                A towering figure of cracked iron leans against the runed wall.
-                Its voice grinds like metal on stone.
-       \s
-                "The path you walk... it does not stretch forever, wanderer.
-                All roads of ash and ember narrow toward one place."
-       \s
-                Its single ember-eye flickers weakly.
-       \s
-                "The Crucible waits.\s
-                The First Flame sleeps inside it, but not peacefully.
-                What you carry… what you *will* carry… will decide whether it wakes or dies."
-       \s
-                The figure lowers its head, as if already mourning.
-       \s
-                "Go when you are ready.\s
-                But know this—no one returns unchanged from the Crucible."
-               \s"""
+                                 A towering figure of cracked iron leans against the runed wall.
+                                 Its voice grinds like metal on stone.
+                        \s
+                                 "The path you walk... it does not stretch forever, wanderer.
+                                 All roads of ash and ember narrow toward one place."
+                        \s
+                                 Its single ember-eye flickers weakly.
+                        \s
+                                 "The Crucible waits.\s
+                                 The First Flame sleeps inside it, but not peacefully.
+                                 What you carry… what you *will* carry… will decide whether it wakes or dies."
+                        \s
+                                 The figure lowers its head, as if already mourning.
+                        \s
+                                 "Go when you are ready.\s
+                                 But know this—no one returns unchanged from the Crucible."
+                                \s"""
         );
         ironSpire.addNPC(Pyrrak);
 
@@ -174,7 +174,7 @@ public class ZorkULGame {
         crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
         registerRooms();
 
-        NPC Acheron = new NPC ("Acheron", vaultOfChains,
+        NPC Acheron = new NPC("Acheron", vaultOfChains,
                 "Acheron follows your every move, silent, patient, waiting." +
                         "“Say the name of the fire-thief, the one punished by the gods.\n" +
                         "Only then will my chains break.”"
@@ -185,32 +185,30 @@ public class ZorkULGame {
                 "Sylpha",
                 ashenGarden,
                 """
-                A faint figure forms among the ashen trees — neither alive nor dead.
-                Her voice is soft, carried by the smoldering wind.
-                
-                "You carry embers of purpose, wanderer… but embers alone are not enough."
-                
-                Her outline flickers like smoke.
-                
-                "The path you seek ends in the Crucible. There, truth is stripped bare,
-                and only one answer can wake the First Flame."
-                
-                A pause… almost sorrow.
-                
-                "Be warned. Those who speak falsely are not merely wrong — 
-                the Crucible judges intent, and its judgment is… absolute."
-                
-                She fades, ember by ember.
-                
-                "Go with caution, Child of Ash. The Flame remembers everything."
-                """
+                        A faint figure forms among the ashen trees — neither alive nor dead.
+                        Her voice is soft, carried by the smoldering wind.
+                        
+                        "You carry embers of purpose, wanderer… but embers alone are not enough."
+                        
+                        Her outline flickers like smoke.
+                        
+                        "The path you seek ends in the Crucible. There, truth is stripped bare,
+                        and only one answer can wake the First Flame."
+                        
+                        A pause… almost sorrow.
+                        
+                        "Be warned. Those who speak falsely are not merely wrong — 
+                        the Crucible judges intent, and its judgment is… absolute."
+                        
+                        She fades, ember by ember.
+                        
+                        "Go with caution, Child of Ash. The Flame remembers everything."
+                        """
         );
         ashenGarden.addNPC(Sylpha);
 
 
     }
-
-
 
 
     private Map<String, Room> roomMap = new HashMap<>();
@@ -223,7 +221,7 @@ public class ZorkULGame {
         roomMap.put("ironspire", ironSpire);
         roomMap.put("spire", ironSpire);
         roomMap.put("crucible", crucible);
-        roomMap.put("chains" , vaultOfChains );
+        roomMap.put("chains", vaultOfChains);
     }
 
 
@@ -315,9 +313,10 @@ public class ZorkULGame {
         parser.showCommands();
     }
 
-    public void getAttack(){
+    public void getAttack() {
         System.out.println("You are alone. You are alone. You are alone.");
     }
+
     public String getPlayerInventory() {
         return player.getInventoryString();
     }
@@ -378,7 +377,6 @@ public class ZorkULGame {
     }
 
 
-
     public void getInventory() {
         System.out.println(player.getInventoryString());
     }
@@ -415,7 +413,6 @@ public class ZorkULGame {
                                 "Symbols flash across the obsidian gate.\n" +
                                 "It seems to respond only to those who carry BOTH:\n" +
                                 " - The Ember Fragment\n" +
-
 
 
                                 " - The Etched Stone"
@@ -484,7 +481,7 @@ public class ZorkULGame {
         String spoken = command.getSecondWord().toLowerCase();
 
 
-        if(spoken.equals("admin")) {
+        if (spoken.equals("admin")) {
             System.out.println("Prometheus loves cheaters.");
             player.addItem(new Item("Gem", "Admin generated"));
             player.addItem(new Item("Ember Fragment", "Admin generated"));
@@ -662,28 +659,65 @@ public class ZorkULGame {
 
     public void saveGame() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
-            out.writeObject(player);
+
+            GameState gs = new GameState();
+            gs.player = this.player;
+            gs.chainsPuzzleSolved = this.chainsPuzzleSolved;
+            gs.echoPuzzleSolved = this.echoPuzzleSolved;
+            gs.finalRiddleSolved = this.finalRiddleSolved;
+            gs.sentinelFailCount = this.sentinelFailCount;
+
+            gs.hallOfEmbers = this.hallOfEmbers;
+            gs.chamberOfEchoes = this.chamberOfEchoes;
+            gs.ashenGarden = this.ashenGarden;
+            gs.ironSpire = this.ironSpire;
+            gs.vaultOfChains = this.vaultOfChains;
+            gs.crucible = this.crucible;
+
+            out.writeObject(gs);
             System.out.println("Game saved.");
+
         } catch (IOException e) {
-            System.out.println("Auto-save failed: " + e.getMessage());
+            System.out.println("Save failed: " + e.getMessage());
         }
     }
 
     public void loadGameIfExists() {
         File f = new File(SAVE_FILE);
         if (!f.exists()) {
-            System.out.println("No save file found. Starting new game.");
+            System.out.println("No save file found.");
             return;
         }
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVE_FILE))) {
-            player = (Character) in.readObject();
-            System.out.println("Game loaded automatically.");
+
+            GameState gs = (GameState) in.readObject();
+
+            // Restore fields
+            this.player = gs.player;
+            this.chainsPuzzleSolved = gs.chainsPuzzleSolved;
+            this.echoPuzzleSolved = gs.echoPuzzleSolved;
+            this.finalRiddleSolved = gs.finalRiddleSolved;
+            this.sentinelFailCount = gs.sentinelFailCount;
+
+            this.hallOfEmbers = gs.hallOfEmbers;
+            this.chamberOfEchoes = gs.chamberOfEchoes;
+            this.ashenGarden = gs.ashenGarden;
+            this.ironSpire = gs.ironSpire;
+            this.vaultOfChains = gs.vaultOfChains;
+            this.crucible = gs.crucible;
+
+            // Critical: rebuild exits after deserialization
+            rebuildRoomConnections();
+
+            System.out.println("Game loaded.");
             System.out.println(player.getCurrentRoom().getLongDescription());
+
         } catch (Exception e) {
-            System.out.println("Failed to load save: " + e.getMessage());
+            System.out.println("Load failed: " + e.getMessage());
         }
     }
+
     private void teleport(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Teleport where?");
@@ -711,14 +745,14 @@ public class ZorkULGame {
         }
 
         String itemName = command.getSecondWord().toLowerCase();
-
         Item item = player.getItem(itemName);
+
         if (item == null) {
             System.out.println("You don't have a " + itemName + ".");
             return;
         }
 
-
+        // Torch puzzle
         if (itemName.equals("torch") && player.getCurrentRoom() == hallOfEmbers) {
             hallOfEmbers.igniteAltar();
             System.out.println("The torch flares brightly as you ignite the Ember Altar!");
@@ -726,12 +760,46 @@ public class ZorkULGame {
             player.removeItem(item);
             return;
         }
+
         System.out.println("You can’t use that here.");
     }
+
+
+    private void rebuildRoomConnections() {
+            hallOfEmbers.setExit("north", chamberOfEchoes);
+            chamberOfEchoes.setExit("south", hallOfEmbers);
+            ironSpire.setExit("west", chamberOfEchoes);
+            ashenGarden.setExit("north", ironSpire);
+            ashenGarden.setExit("east", vaultOfChains);
+            vaultOfChains.setExit("west", ashenGarden);
+            vaultOfChains.setExit("south", crucible);
+            crucible.setExit("north", vaultOfChains);
+            ironSpire.setExit("south", ashenGarden);
+
+            // if puzzle solved → also restore extra exits
+            if (echoPuzzleSolved)
+                chamberOfEchoes.setExit("east", ironSpire);
+        }
+
     public String getNPCinCurrentRoom() {
         if (player.getCurrentRoom().getNPCs().isEmpty())
             return null;
         return player.getCurrentRoom().getNPCs().getFirst().getName();
+    }
+
+
+    public static class GameState implements Serializable {
+        public Character player;
+        public boolean chainsPuzzleSolved;
+        public boolean echoPuzzleSolved;
+        public boolean finalRiddleSolved;
+        public int sentinelFailCount;
+        public Room hallOfEmbers;
+        public Room chamberOfEchoes;
+        public Room ashenGarden;
+        public Room ironSpire;
+        public Room vaultOfChains;
+        public Room crucible;
     }
 
     public static void main(String[] args) {
