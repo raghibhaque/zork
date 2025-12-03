@@ -61,8 +61,6 @@ public class ZorkGUI extends Application {
         minimapImage.setFitWidth(512);
         minimapImage.setFitHeight(512);
         minimapImage.setPreserveRatio(true);
-        minimapImage.setSmooth(false);
-        minimapImage.setCache(false);
 
         try {
             minimapImage.setImage(new Image(Objects.requireNonNull(
