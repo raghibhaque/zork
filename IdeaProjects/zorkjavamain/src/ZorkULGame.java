@@ -575,7 +575,8 @@ public class ZorkULGame {
                                 "*** YOU WIN ***"
                 );
 
-                javafx.application.Platform.exit();
+                if (onGameWin != null) onGameWin.run();
+                scheduleExit();
                 return;
             }
 
@@ -607,6 +608,15 @@ public class ZorkULGame {
             }
         }
     }
+
+    private void scheduleExit() {
+        javafx.application.Platform.runLater(() -> {
+            javafx.animation.PauseTransition delay =  new javafx.animation.PauseTransition(javafx.util.Duration.seconds(5)); // wait 5s for win.mp3 to play
+            delay.setOnFinished(event -> javafx.application.Platform.exit());
+            delay.play();
+        });
+    }
+
 
     private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
@@ -801,6 +811,12 @@ public class ZorkULGame {
         public Room vaultOfChains;
         public Room crucible;
     }
+
+    private Runnable onGameWin;
+    public void setOnGameWin(Runnable r) {
+        this.onGameWin = r;
+    }
+
 
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
