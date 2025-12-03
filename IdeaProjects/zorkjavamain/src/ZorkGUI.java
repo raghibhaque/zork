@@ -58,14 +58,18 @@ public class ZorkGUI extends Application {
         roomImage.setPreserveRatio(true);
 
         ImageView minimapImage = new ImageView();
-        minimapImage.setFitWidth(240);
-        minimapImage.setFitHeight(240);
+        minimapImage.setFitWidth(512);
+        minimapImage.setFitHeight(512);
         minimapImage.setPreserveRatio(true);
+        minimapImage.setSmooth(false);
+        minimapImage.setCache(false);
 
         try {
             minimapImage.setImage(new Image(Objects.requireNonNull(
                     getClass().getResource("/images/minimap.png")).toExternalForm()
             ));
+            minimapImage.setSmooth(false);
+            minimapImage.setCache(false);
         } catch (Exception e) {
             System.out.println("Minimap not found yet!");
         }
