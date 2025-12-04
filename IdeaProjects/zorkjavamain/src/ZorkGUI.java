@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.animation.FadeTransition;
+import javafx.animation.SequentialTransition;
+import javafx.util.Duration;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +27,8 @@ public class ZorkGUI extends Application {
     private boolean inventoryOpen = false;
     private Button giveBtn;
     private Button useBtn;
+    private String previousRoomName = "";
+    private boolean isMovementCommand = false;
 
 
 
@@ -58,8 +63,8 @@ public class ZorkGUI extends Application {
         roomImage.setPreserveRatio(true);
 
         ImageView minimapImage = new ImageView();
-        minimapImage.setFitWidth(512);
-        minimapImage.setFitHeight(512);
+        minimapImage.setFitWidth(256);
+        minimapImage.setFitHeight(256);
         minimapImage.setPreserveRatio(true);
 
         try {
@@ -140,6 +145,23 @@ public class ZorkGUI extends Application {
 
         useBtn = new Button("Use");
         useBtn.setTooltip(new Tooltip("Use an item such as the Torch"));
+
+        Button helpBtn = new Button("Help");
+        helpBtn.setTooltip(new Tooltip("Show available commands"));
+
+        helpBtn.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Help");
+            alert.setHeaderText("Available Commands & Controls");
+            alert.setContentText(
+                    "Movement: go north/south/east/west or W A S D\n" +
+                            "Items: take <item>, drop <item>, use <item>\n" +
+                            "NPCs: talk <name>, give <item> <name>\n" +
+                            "Other: inventory, save game, load game, ESC to quit."
+            );
+            alert.showAndWait();
+        });
+        buttonGrid.add(helpBtn, 1, 0);
 
 
 
@@ -263,9 +285,16 @@ public class ZorkGUI extends Application {
         String w2 = words.length > 1 ? words[1] : null;
         String w3 = words.length > 2 ? words[2] : null;
 
+        // Check if this is a movement command
+        isMovementCommand = w1 != null && w1.equalsIgnoreCase("go");
+
         CommandWord cw = new CommandWords().getCommandWord(w1);
         if (w1.equalsIgnoreCase("take")) {
             playSound("pickup.mp3");
+        }
+
+        if(w1.equalsIgnoreCase("use")) {
+            playSound("use.mp3");
         }
 
         cmd = new Command(cw, w2, w3);
@@ -279,42 +308,18 @@ public class ZorkGUI extends Application {
         outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
 
-        String roomName = game.getCurrentRoomDescription().toLowerCase();
-        if (roomName.contains("ashen")) {
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/garden.png")).toExternalForm()
-            ));
-        }
-        else if(roomName.contains("crucible")) {
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/crucible.png")).toExternalForm()
-            ));
-        }
-        else if (roomName.contains("vault")) {
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/chains.png")).toExternalForm()
-            ));
-        }
-        else if (roomName.contains("embers")) {
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
-            ));
-        }
-        else if (roomName.contains("echoes")){
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
-            ));
-        }
+        // Check if room changed AND it was a movement command
+        String currentRoomName = game.getCurrentRoomDescription().toLowerCase();
+        boolean roomChanged = !currentRoomName.equals(previousRoomName) && isMovementCommand;
 
-        else if (roomName.contains("spire")) {
-            roomImage.setImage(new Image(
-                    Objects.requireNonNull(getClass().getResource("/images/spire.png")).toExternalForm()
-            ));
-        }
+        updateRoomImage(roomChanged);
 
-        else {
-            roomImage.setImage(null);
-        }
+        // Update previous room name
+        previousRoomName = currentRoomName;
+
+        // Reset movement flag
+        isMovementCommand = false;
+
         if (playerHasGem()) {
             giveBtn.setVisible(true);
         } else {
@@ -325,8 +330,75 @@ public class ZorkGUI extends Application {
         } else {
             useBtn.setVisible(false);
         }
+    }
 
+    /**
+     * Updates the room image with a smooth fade transition only if room changed
+     */
+    private void updateRoomImage(boolean roomChanged) {
+        String roomName = game.getCurrentRoomDescription().toLowerCase();
+        Image newImage = null;
 
+        if (roomName.contains("ashen")) {
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/garden.png")).toExternalForm()
+            );
+        }
+        else if(roomName.contains("crucible")) {
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/crucible.png")).toExternalForm()
+            );
+        }
+        else if (roomName.contains("vault")) {
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/chains.png")).toExternalForm()
+            );
+        }
+        else if (roomName.contains("embers")) {
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/hall.png")).toExternalForm()
+            );
+        }
+        else if (roomName.contains("echoes")){
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/echoes.png")).toExternalForm()
+            );
+        }
+        else if (roomName.contains("spire")) {
+            newImage = new Image(
+                    Objects.requireNonNull(getClass().getResource("/images/spire.png")).toExternalForm()
+            );
+        }
+
+        // Apply fade transition only if room actually changed
+        if (roomChanged) {
+            applyFadeTransition(newImage);
+        } else {
+            // Just set the image directly without animation
+            roomImage.setImage(newImage);
+        }
+    }
+
+    /**
+     * Applies a fade out -> fade in transition when changing room images
+     */
+    private void applyFadeTransition(Image newImage) {
+        // Fade out current image
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), roomImage);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+
+        // Fade in new image
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), roomImage);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+
+        // Set the new image when fade out completes
+        fadeOut.setOnFinished(e -> roomImage.setImage(newImage));
+
+        // Chain the transitions
+        SequentialTransition transition = new SequentialTransition(fadeOut, fadeIn);
+        transition.play();
     }
 
 
@@ -359,6 +431,7 @@ public class ZorkGUI extends Application {
 
         inventoryStage.setOnCloseRequest(e -> inventoryOpen = false);
     }
+
     private boolean playerHasGem() {
         return game.getPlayerInventory().toLowerCase().contains("gem");
     }

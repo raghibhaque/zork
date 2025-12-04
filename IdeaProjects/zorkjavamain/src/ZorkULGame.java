@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ZorkULGame {
     private Parser parser;
@@ -46,7 +47,7 @@ public class ZorkULGame {
         createRooms();
         // loadGameIfExists();
         parser = new Parser();
-        printWelcome();
+        //printWelcome();
     }
 
     private void createRooms() {
@@ -226,7 +227,7 @@ public class ZorkULGame {
 
 
     public void play() {
-        printWelcome();
+        //printWelcome();
 
         boolean finished = false;
         while (!finished) {
@@ -236,13 +237,13 @@ public class ZorkULGame {
         System.out.println("Thank you for playing. Goodbye.");
     }
 
-    private void printWelcome() {
+    /*private void printWelcome() {
         System.out.println();
         System.out.println("Welcome to the game!");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(player.getCurrentRoom().getLongDescription());
-    }
+    }*/
 
     boolean processCommand(Command command) {
         switch (command.getCommandWord()) {
