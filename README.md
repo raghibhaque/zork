@@ -62,27 +62,27 @@ src/
 
 ---
 
-## **Installation and Running**
+# ⚙️ How to Compile and Run **Flames of Prometheus**
 
-### **Requirements**
-* Java 17 or later  
-* JavaFX SDK  
-* IntelliJ IDEA or equivalent IDE  
+This project requires **Java 17+** and **JavaFX 25**.  
+Since JavaFX is not included in modern JDKs, you must either run the provided `.bat` launcher or supply the JavaFX module path manually.
 
-### **Run in IDE**
-1. Clone the repository  
-2. Ensure JavaFX SDK is added to project dependencies  
-3. Run `ZorkGUI`  
+jar file #3 is the latest in source files.
 
-### **Compile and Run (Command Line)**
-javac --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media *.java
-java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media ZorkGUI
+---
 
+## 🟢 Option 1 — Run the Game JAR (Recommended)
 
-### **Run the Executable JAR**
-java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media -jar FlamesOfPrometheus.jar
+After downloading and extracting the repository:
 
+### Run this command:
 
+```bash
+java --module-path "PATH_TO_JAVAFX/lib" --add-modules javafx.controls,javafx.fxml,javafx.media,javafx.graphics -jar zorkJAR.jar
+
+```
+---
+run_game.bat is included which can be used to run the game, WINDOWS ONLY.
 ---
 
 ## **Controls**
@@ -105,20 +105,6 @@ java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.medi
 The game uses **Java Serialization** to save and restore full game state.  
 A file named `savegame.ser` is created automatically or via GUI buttons.
 
----
-
-## **Testing**
-JUnit tests should be placed in:
-src/test/java/
-
-
-
-Recommended test coverage:
-* Room navigation and connections  
-* Inventory behaviour  
-* Command parsing  
-* Puzzle requirements  
-* Serialization and deserialization  
 
 ---
 
