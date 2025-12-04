@@ -47,7 +47,6 @@ public class ZorkULGame {
         createRooms();
         // loadGameIfExists();
         parser = new Parser();
-        printWelcome();
     }
 
     private void createRooms() {
