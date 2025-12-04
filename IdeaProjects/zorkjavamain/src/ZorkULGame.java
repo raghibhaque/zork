@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -8,10 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ZorkULGame {
-    private Parser parser;
+    private final Parser parser;
     private Character player;
     private TextArea outputArea;
     private static final String SAVE_FILE = "savegame.ser";
@@ -38,7 +38,7 @@ public class ZorkULGame {
     public ZorkULGame() {
         createRooms();
         parser = new Parser();
-        System.out.println("ZorkULGame started");
+        print("ZorkULGame started");
 
     }
 
@@ -212,7 +212,7 @@ public class ZorkULGame {
     }
 
 
-    private Map<String, Room> roomMap = new HashMap<>();
+    private final Map<String, Room> roomMap = new HashMap<>();
 
     private void registerRooms() {
         roomMap.put("embers", hallOfEmbers);
@@ -234,15 +234,15 @@ public class ZorkULGame {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
-        System.out.println("Thank you for playing. Goodbye.");
+        print("Thank you for playing. Goodbye.");
     }
 
     private void printWelcome() {
-        System.out.println();
-        System.out.println("Welcome to the game!");
-        System.out.println("Type 'help' if you need help.");
-        System.out.println();
-        System.out.println(player.getCurrentRoom().getLongDescription());
+        print("");
+        print("Welcome to the game!");
+        print("Type 'help' if you need help.");
+        print("");
+        print(player.getCurrentRoom().getLongDescription());
     }
 
     boolean processCommand(Command command) {
@@ -263,7 +263,7 @@ public class ZorkULGame {
                 teleport(command);
                 break;
             case INVENTORY:
-                System.out.println(player.getInventoryString());
+                print(player.getInventoryString());
                 break;
             case READ:
                 readItem(command);
@@ -295,27 +295,27 @@ public class ZorkULGame {
 
             case QUIT:
                 if (command.hasSecondWord()) {
-                    System.out.println("Quit what?");
+                    print("Quit what?");
                     return false;
                 }
                 return true;
 
             case UNKNOWN:
             default:
-                System.out.println("I don't know what you mean...");
+                print("I don't know what you mean...");
                 break;
         }
         return false;
     }
 
     private void printHelp() {
-        System.out.println("You are lost. You are alone. The flame is burning.");
+        print("You are lost. You are alone. The flame is burning.");
         System.out.print("Your command words are: ");
         parser.showCommands();
     }
 
     public void getAttack() {
-        System.out.println("You are alone. You are alone. You are alone.");
+        print("You are alone. You are alone. You are alone.");
     }
 
     public String getPlayerInventory() {
@@ -324,11 +324,11 @@ public class ZorkULGame {
 
     private void giveItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Give what?");
+            print("Give what?");
             return;
         }
         if (!command.hasThirdWord()) {
-            System.out.println("Give it to who?");
+            print("Give it to who?");
             return;
         }
 
@@ -338,7 +338,7 @@ public class ZorkULGame {
         Item item = player.getItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have " + itemName + "!");
+            print("You don't have " + itemName + "!");
             return;
         }
 
@@ -351,13 +351,13 @@ public class ZorkULGame {
         }
 
         if (target == null) {
-            System.out.println("There is no " + npcName + " here.");
+            print("There is no " + npcName + " here.");
             return;
         }
 
         if (npcName.equalsIgnoreCase("Orpheon") && itemName.equalsIgnoreCase("Gem")) {
 
-            System.out.println(
+            print(
                     """
                             Orpheon takes the Gem into his palm.
                             "Ah… the Echoing Core," he whispers.
@@ -374,18 +374,18 @@ public class ZorkULGame {
 
             return;
         }
-        System.out.println(npcName + " does not want the " + itemName + ".");
+        print(npcName + " does not want the " + itemName + ".");
     }
 
 
     public void getInventory() {
-        System.out.println(player.getInventoryString());
+        print(player.getInventoryString());
     }
 
     @CommandDescription("Moves the player to a different room.")
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Go where?");
+            print("Go where?");
             return;
         }
 
@@ -393,14 +393,14 @@ public class ZorkULGame {
         Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("No door here!");
+            print("No door here!");
             return;
         }
 
         // BLOCK NORTH IN HALL OF EMBERS
         if (player.getCurrentRoom() == hallOfEmbers && direction.equalsIgnoreCase("north") && !hallOfEmbers.isAltarIgnited()) {
 
-            System.out.println("A wall of cold ash blocks your path. The Ember Altar is dormant.");
+            print("A wall of cold ash blocks your path. The Ember Altar is dormant.");
             return;
         }
         if (nextRoom == crucible) {
@@ -409,7 +409,7 @@ public class ZorkULGame {
             Item stone = player.getItem("Etched Stone");
 
             if (fragment == null || stone == null) {
-                System.out.println(
+                print(
                         "A barrier of burning air blocks your path.\n" +
                                 "Symbols flash across the obsidian gate.\n" +
                                 "It seems to respond only to those who carry BOTH:\n" +
@@ -424,7 +424,7 @@ public class ZorkULGame {
 
 
         player.setCurrentRoom(nextRoom);
-        System.out.println(player.getCurrentRoom().getLongDescription());
+        print(player.getCurrentRoom().getLongDescription());
     }
 
     public String getCurrentRoomDescription() {
@@ -433,7 +433,7 @@ public class ZorkULGame {
 
     private void takeItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Take what?");
+            print("Take what?");
             return;
         }
 
@@ -441,20 +441,20 @@ public class ZorkULGame {
         Item item = player.getCurrentRoom().getItem(itemName);
 
         if (item == null) {
-            System.out.println("There is no " + itemName + " here!");
+            print("There is no " + itemName + " here!");
         } else if (!item.isVisible()) {
-            System.out.println("You can’t see that item right now!");
+            print("You can’t see that item right now!");
         } else {
             player.addItem(item);
             player.getCurrentRoom().removeItem(itemName);
             item.setLocation("inventory");
-            System.out.println("You picked up the " + item.getName() + ".");
+            print("You picked up the " + item.getName() + ".");
         }
     }
 
     private void talkToNPC(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Talk to who?");
+            print("Talk to who?");
             if (outputArea != null) outputArea.appendText("Talk to who?\n");
             return;
         }
@@ -467,7 +467,7 @@ public class ZorkULGame {
                 String dialogue = npc.speak();   // returns String (console-safe)
 
                 // print to console
-                System.out.println(dialogue);
+                print(dialogue);
 
                 // print to GUI
                 if (outputArea != null)
@@ -479,7 +479,7 @@ public class ZorkULGame {
 
         String msg = "There’s no one named " + npcName + " here.";
 
-        System.out.println(msg);
+        print(msg);
         if (outputArea != null) outputArea.appendText(msg + "\n");
     }
 
@@ -488,7 +488,7 @@ public class ZorkULGame {
 
     private void sayWord(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Say what?");
+            print("Say what?");
             return;
         }
 
@@ -496,7 +496,7 @@ public class ZorkULGame {
 
 
         if (spoken.equals("admin")) {
-            System.out.println("Prometheus loves cheaters.");
+            print("Prometheus loves cheaters.");
             player.addItem(new Item("Gem", "Admin generated"));
             player.addItem(new Item("Ember Fragment", "Admin generated"));
             player.addItem(new Item("Etched Stone", "Admin generated"));
@@ -522,7 +522,7 @@ public class ZorkULGame {
             if (spoken.equals("chain")) {
                 echoPuzzleSolved = true;
 
-                System.out.println(
+                print(
                         "Your voice rebounds endlessly...\n" +
                                 "The chamber trembles.\n" +
                                 "A hidden archway reveals itself to the east!"
@@ -531,7 +531,7 @@ public class ZorkULGame {
                 chamberOfEchoes.setExit("east", ironSpire);
                 return;
             } else {
-                System.out.println("The walls repeat your words... but nothing happens.");
+                print("The walls repeat your words... but nothing happens.");
                 return;
             }
         }
@@ -541,7 +541,7 @@ public class ZorkULGame {
 
                 chainsPuzzleSolved = true;
 
-                System.out.println(
+                print(
                         "The chains clatter violently...\n" +
                                 "A hidden compartment opens in the wall.\n" +
                                 "Inside lies an ancient stone tablet."
@@ -552,13 +552,12 @@ public class ZorkULGame {
                                 "You sense it may be important...");
                 player.addItem(etched);
 
-                System.out.println("You obtain: Etched Stone.");
-                return;
+                print("You obtain: Etched Stone.");
 
             } else {
-                System.out.println("Your voice echoes off the iron walls, but nothing happens.");
-                return;
+                print("Your voice echoes off the iron walls, but nothing happens.");
             }
+            return;
         }
 
 
@@ -569,7 +568,7 @@ public class ZorkULGame {
 
                 finalRiddleSolved = true;
 
-                System.out.println(
+                print(
                         "The Sentinel bows its head.\n" +
                                 "\"You speak the truth. Fire was the first gift…\"\n" +
                                 "It extends its hand, revealing a blazing orb.\n" +
@@ -580,7 +579,7 @@ public class ZorkULGame {
                         "The First Fire — blazing with impossible brilliance.");
                 player.addItem(flame);
 
-                System.out.println(
+                print(
                         "As you grasp the Primordial Flame, the world ignites in gold.\n" +
                                 "Ash lifts from the ground. Stone cracks and blooms.\n" +
                                 "The ancient halls roar back to life.\n\n" +
@@ -598,17 +597,17 @@ public class ZorkULGame {
             sentinelFailCount++;
 
             if (sentinelFailCount == 1) {
-                System.out.println("The Sentinel's eyes narrow. \"Think carefully, wanderer.\"");
+                print("The Sentinel's eyes narrow. \"Think carefully, wanderer.\"");
                 return;
             }
 
             if (sentinelFailCount == 2) {
-                System.out.println("The Sentinel's flame flickers violently. \"Your ignorance grows… dangerous.\"");
+                print("The Sentinel's flame flickers violently. \"Your ignorance grows… dangerous.\"");
                 return;
             }
 
             if (sentinelFailCount >= 3) {
-                System.out.println(
+                print(
                         "The Crucible falls silent.\n" +
                                 "The Sentinel steps forward.\n" +
                                 "\"Enough.\"\n\n" +
@@ -617,9 +616,15 @@ public class ZorkULGame {
                                 "*** YOU HAVE LOST ***"
                 );
 
-                javafx.application.Platform.exit();
+                Platform.runLater(Platform::exit);
                 return;
             }
+        }
+    }
+    private void print(String text) {
+        System.out.println(text);
+        if (outputArea != null) {
+            Platform.runLater(() -> outputArea.appendText(text + "\n"));
         }
     }
 
@@ -634,26 +639,26 @@ public class ZorkULGame {
 
     private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Drop what?");
+            print("Drop what?");
             return;
         }
         String itemName = command.getSecondWord();
         Item item = player.getItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have " + itemName + "!");
+            print("You don't have " + itemName + "!");
             return;
         }
 
         player.removeItem(item);
         player.getCurrentRoom().addItem(item);
         item.setLocation(player.getCurrentRoom().getDescription());
-        System.out.println("You dropped the " + item.getName() + ".");
+        print("You dropped the " + item.getName() + ".");
     }
 
     private void readItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Read what?");
+            print("Read what?");
             return;
         }
 
@@ -665,19 +670,19 @@ public class ZorkULGame {
         }
 
         if (item == null) {
-            System.out.println("There is no " + itemName + " here to read.");
+            print("There is no " + itemName + " here to read.");
             return;
         }
 
         if (itemName.equalsIgnoreCase("note")) {
-            System.out.println(
+            print(
                     "The note unfurls by itself...\n" +
                             "A whisper crawls across the chamber:\n\n" +
                             "\"That which is bound to stone, yet yearns forever skyward...\"\n" +
                             "\"Speak its name to the hollow air, and the path will open.\""
             );
         } else {
-            System.out.println("There's nothing written on that.");
+            print("There's nothing written on that.");
         }
     }
 
@@ -699,17 +704,17 @@ public class ZorkULGame {
             gs.crucible = this.crucible;
 
             out.writeObject(gs);
-            System.out.println("Game saved.");
+            print("Game saved.");
 
         } catch (IOException e) {
-            System.out.println("Save failed: " + e.getMessage());
+            print("Save failed: " + e.getMessage());
         }
     }
 
     public void loadGameIfExists() {
         File f = new File(SAVE_FILE);
         if (!f.exists()) {
-            System.out.println("No save file found.");
+            print("No save file found.");
             return;
         }
 
@@ -734,17 +739,17 @@ public class ZorkULGame {
             // Critical: rebuild exits after deserialization
             rebuildRoomConnections();
 
-            System.out.println("Game loaded.");
-            System.out.println(player.getCurrentRoom().getLongDescription());
+            print("Game loaded.");
+            print(player.getCurrentRoom().getLongDescription());
 
         } catch (Exception e) {
-            System.out.println("Load failed: " + e.getMessage());
+            print("Load failed: " + e.getMessage());
         }
     }
 
     private void teleport(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Teleport where?");
+            print("Teleport where?");
             return;
         }
 
@@ -753,18 +758,18 @@ public class ZorkULGame {
         Room target = roomMap.get(roomName);
 
         if (target == null) {
-            System.out.println("No such room: " + roomName);
+            print("No such room: " + roomName);
             return;
         }
 
         player.setCurrentRoom(target);
-        System.out.println("You teleport to:");
-        System.out.println(target.getLongDescription());
+        print("You teleport to:");
+        print(target.getLongDescription());
     }
 
     private void useItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Use what?");
+            print("Use what?");
             return;
         }
 
@@ -772,20 +777,20 @@ public class ZorkULGame {
         Item item = player.getItem(itemName);
 
         if (item == null) {
-            System.out.println("You don't have a " + itemName + ".");
+            print("You don't have a " + itemName + ".");
             return;
         }
 
         // Torch puzzle
         if (itemName.equals("torch") && player.getCurrentRoom() == hallOfEmbers) {
             hallOfEmbers.igniteAltar();
-            System.out.println("The torch flares brightly as you ignite the Ember Altar!");
-            System.out.println("The northern gate rumbles open...");
+            print("The torch flares brightly as you ignite the Ember Altar!");
+            print("The northern gate rumbles open...");
             player.removeItem(item);
             return;
         }
 
-        System.out.println("You can’t use that here.");
+        print("You can’t use that here.");
     }
 
 

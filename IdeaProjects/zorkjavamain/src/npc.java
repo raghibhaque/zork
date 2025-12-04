@@ -26,7 +26,7 @@ class NPC extends Character implements Serializable {
 
     public void speak(TextArea outputArea) {
         if (outputArea == null) {
-            System.out.println(dialogue);
+            System.out.print(dialogue);
         } else {
             outputArea.appendText(dialogue + "\n");
         }
