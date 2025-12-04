@@ -47,7 +47,7 @@ public class ZorkULGame {
         createRooms();
         // loadGameIfExists();
         parser = new Parser();
-        //printWelcome();
+        printWelcome();
     }
 
     private void createRooms() {
@@ -227,7 +227,7 @@ public class ZorkULGame {
 
 
     public void play() {
-        //printWelcome();
+        printWelcome();
 
         boolean finished = false;
         while (!finished) {
@@ -237,13 +237,13 @@ public class ZorkULGame {
         System.out.println("Thank you for playing. Goodbye.");
     }
 
-    /*private void printWelcome() {
+    private void printWelcome() {
         System.out.println();
         System.out.println("Welcome to the game!");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(player.getCurrentRoom().getLongDescription());
-    }*/
+    }
 
     boolean processCommand(Command command) {
         switch (command.getCommandWord()) {
@@ -455,6 +455,7 @@ public class ZorkULGame {
     private void talkToNPC(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Talk to who?");
+            if (outputArea != null) outputArea.appendText("Talk to who?\n");
             return;
         }
 
@@ -463,13 +464,25 @@ public class ZorkULGame {
 
         for (NPC npc : currentRoom.getNPCs()) {
             if (npc.getName().equalsIgnoreCase(npcName)) {
-                System.out.println(npc.speak());
+                String dialogue = npc.speak();   // returns String (console-safe)
+
+                // print to console
+                System.out.println(dialogue);
+
+                // print to GUI
+                if (outputArea != null)
+                    outputArea.appendText(dialogue + "\n");
+
                 return;
             }
         }
 
-        System.out.println("There’s no one named " + npcName + " here.");
+        String msg = "There’s no one named " + npcName + " here.";
+
+        System.out.println(msg);
+        if (outputArea != null) outputArea.appendText(msg + "\n");
     }
+
 
     private boolean echoPuzzleSolved = false;
 

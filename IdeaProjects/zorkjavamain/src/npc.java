@@ -1,3 +1,5 @@
+import javafx.scene.control.TextArea;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -22,12 +24,21 @@ class NPC extends Character implements Serializable {
     }
 
 
+    public void speak(TextArea outputArea) {
+        if (outputArea == null) {
+            System.out.println(dialogue);
+        } else {
+            outputArea.appendText(dialogue + "\n");
+        }
+    }
     public String speak() {
         return dialogue;
     }
+
 
     @Override
     public String toString() {
         return "NPC{name='" + getName() + "', room='" + getCurrentRoom().getDescription() + "'}";
     }
 }
+

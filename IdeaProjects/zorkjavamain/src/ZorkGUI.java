@@ -29,6 +29,8 @@ public class ZorkGUI extends Application {
     private Button useBtn;
     private String previousRoomName = "";
     private boolean isMovementCommand = false;
+    private boolean isTalk = false;
+
 
 
 
@@ -285,23 +287,31 @@ public class ZorkGUI extends Application {
         String w2 = words.length > 1 ? words[1] : null;
         String w3 = words.length > 2 ? words[2] : null;
 
-        // Check if this is a movement command
+        // movement detection
         isMovementCommand = w1 != null && w1.equalsIgnoreCase("go");
 
-        CommandWord cw = new CommandWords().getCommandWord(w1);
-        if (w1.equalsIgnoreCase("take")) {
-            playSound("pickup.mp3");
-        }
+        // TALK detection (this is the fix)
+        isTalk = w1 != null && w1.equalsIgnoreCase("talk");
 
-        if(w1.equalsIgnoreCase("use")) {
-            playSound("use.mp3");
-        }
+        CommandWord cw = new CommandWords().getCommandWord(w1);
+
+        if (w1.equalsIgnoreCase("take")) playSound("pickup.mp3");
+        if (w1.equalsIgnoreCase("use")) playSound("use.mp3");
 
         cmd = new Command(cw, w2, w3);
 
         game.processCommand(cmd);
-        displayGameState();
+
+        // do NOT refresh GUI if talking
+        if (!isTalk) {
+            displayGameState();
+        }
+
+        // reset after talking
+        isTalk = false;
     }
+
+
 
     private void displayGameState() {
         outputArea.clear();
