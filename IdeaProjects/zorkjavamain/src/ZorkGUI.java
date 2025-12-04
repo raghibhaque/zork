@@ -276,6 +276,11 @@ public class ZorkGUI extends Application {
 
 
         primaryStage.setScene(scene);
+        primaryStage.setWidth(1270);
+        primaryStage.setHeight(800);
+
+
+
         primaryStage.show();
 
         displayGameState();

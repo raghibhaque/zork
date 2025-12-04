@@ -310,7 +310,7 @@ public class ZorkULGame {
 
     private void printHelp() {
         print("You are lost. You are alone. The flame is burning.");
-        System.out.print("Your command words are: ");
+        print("Your command words are: ");
         parser.showCommands();
     }
 
@@ -475,7 +475,6 @@ public class ZorkULGame {
         String msg = "There’s no one named " + npcName + " here.";
 
         print(msg);
-        if (outputArea != null) outputArea.appendText(msg + "\n");
     }
 
 
@@ -739,8 +738,21 @@ public class ZorkULGame {
             this.vaultOfChains = gs.vaultOfChains;
             this.crucible = gs.crucible;
 
-            // Critical: rebuild exits after deserialization
+            // Restore room connections
             rebuildRoomConnections();
+
+            // Restore puzzle rewards
+            if (chainsPuzzleSolved) {
+                if (player.getItem("Etched Stone") == null) {
+                    player.addItem(new Item("Etched Stone",
+                            "A tablet depicting Prometheus bound to the rock, holding stolen fire."));
+                    print("Etched Stone restored.");
+                }
+            }
+
+            if (echoPuzzleSolved) {
+                // If needed, restore Ember Fragment here
+            }
 
             print("Game loaded.");
             print(player.getCurrentRoom().getLongDescription());
@@ -749,6 +761,7 @@ public class ZorkULGame {
             print("Load failed: " + e.getMessage());
         }
     }
+
 
     private void teleport(Command command) {
         if (!command.hasSecondWord()) {
@@ -798,20 +811,22 @@ public class ZorkULGame {
 
 
     private void rebuildRoomConnections() {
-            hallOfEmbers.setExit("north", chamberOfEchoes);
-            chamberOfEchoes.setExit("south", hallOfEmbers);
-            ironSpire.setExit("west", chamberOfEchoes);
-            ashenGarden.setExit("north", ironSpire);
-            ashenGarden.setExit("east", vaultOfChains);
-            vaultOfChains.setExit("west", ashenGarden);
-            vaultOfChains.setExit("south", crucible);
-            crucible.setExit("north", vaultOfChains);
-            ironSpire.setExit("south", ashenGarden);
+        hallOfEmbers.setExit("north", chamberOfEchoes);
+        chamberOfEchoes.setExit("south", hallOfEmbers);
+        ironSpire.setExit("west", chamberOfEchoes);
+        ashenGarden.setExit("north", ironSpire);
+        ashenGarden.setExit("east", vaultOfChains);
+        vaultOfChains.setExit("west", ashenGarden);
+        vaultOfChains.setExit("south", crucible);
+        crucible.setExit("north", vaultOfChains);
+        ironSpire.setExit("south", ashenGarden);
 
-            // if puzzle solved → also restore extra exits
-            if (echoPuzzleSolved)
-                chamberOfEchoes.setExit("east", ironSpire);
-        }
+        // if puzzle solved → also restore extra exits
+        if (echoPuzzleSolved)
+            chamberOfEchoes.setExit("east", ironSpire);
+
+    }
+
 
     public String getNPCinCurrentRoom() {
         if (player.getCurrentRoom().getNPCs().isEmpty())
