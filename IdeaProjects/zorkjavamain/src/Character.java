@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Map;
 
 public class Character implements Serializable {
     @Serial
@@ -46,4 +47,9 @@ public class Character implements Serializable {
     public String getInventoryString() {
         return inventory.toString();
     }
+
+    public Inventory<Item> getInventory() {
+        return inventory;
+    }
+
 }

@@ -22,7 +22,9 @@ public class Inventory<T extends Item> implements Serializable {
         }
         return false;
     }
-
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
     public T get(String name) {
         for (T item : items) {
             if (item.getName().equalsIgnoreCase(name)) return item;

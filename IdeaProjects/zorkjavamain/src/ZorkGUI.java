@@ -30,6 +30,10 @@ public class ZorkGUI extends Application {
     private String previousRoomName = "";
     private boolean isMovementCommand = false;
     private boolean isTalk = false;
+    private Button talkBtn;
+    private Button takeBtn;
+    private Button dropBtn;
+
 
 
 
@@ -126,10 +130,10 @@ public class ZorkGUI extends Application {
         Button westBtn = new Button("West");
         westBtn.setTooltip(new Tooltip("Move west into the next room"));
 
-        Button takeBtn = new Button("Take");
+        takeBtn = new Button("Take");
         takeBtn.setTooltip(new Tooltip("Pick up an item in this room"));
 
-        Button dropBtn = new Button("Drop");
+        dropBtn = new Button("Drop");
         dropBtn.setTooltip(new Tooltip("Drop an item from your inventory"));
 
         Button inventoryBtn = new Button("Inventory");
@@ -141,7 +145,7 @@ public class ZorkGUI extends Application {
         Button loadBtn = new Button("Load Game");
         loadBtn.setTooltip(new Tooltip("Load your previously saved game"));
 
-        Button talkBtn = new Button("Talk");
+        talkBtn = new Button("Talk");
         talkBtn.setTooltip(new Tooltip("Talk to the NPC in this room"));
 
         giveBtn = new Button("Give");
@@ -316,6 +320,13 @@ public class ZorkGUI extends Application {
 
         // reset after talking
         isTalk = false;
+
+        outputArea.setOpacity(0);
+        FadeTransition fade = new FadeTransition(Duration.millis(250), outputArea);
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        fade.play();
+
     }
 
 
@@ -324,6 +335,10 @@ public class ZorkGUI extends Application {
         outputArea.clear();
         outputArea.appendText(game.getCurrentRoomDescription() + "\n\n");
         outputArea.appendText(game.getPlayerInventory() + "\n");
+        talkBtn.setDisable(game.getNPCinCurrentRoom() == null);
+        takeBtn.setDisable(!game.roomHasItems());
+        dropBtn.setDisable(!game.playerHasItems());
+
 
         // Check if room changed AND it was a movement command
         String currentRoomName = game.getCurrentRoomDescription().toLowerCase();

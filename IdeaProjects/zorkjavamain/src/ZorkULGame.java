@@ -854,6 +854,16 @@ public class ZorkULGame {
         this.onGameWin = r;
     }
 
+    public boolean roomHasItems() {
+        return player.getCurrentRoom().hasItems();
+    }
+
+    public boolean playerHasItems() {
+        return !player.getInventory().isEmpty();
+    }
+
+
+
 
     public static void main(String[] args) {
         ZorkGUI.launch(ZorkGUI.class, args);
