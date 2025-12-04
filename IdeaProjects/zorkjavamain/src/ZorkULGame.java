@@ -166,9 +166,10 @@ public class ZorkULGame {
 
         chamberOfEchoes.addItem(new Item("Gem", "The trapped gold veins evoke the image of caged fire."));
         this.note = new Item("note",
-                "Pick the gem up. The old riddleman used to describe the stolen gift as 'That which is bound to stone, \n" +
-                        " yet yearns forever skyward.'\n" +
-                        " If you wish the way to open, speak the thing he named to the empty air "
+                "The riddle speaks of something bound to stone,\n" +
+                        "yet always pulling upward against its fate.\n" +
+                        "It holds things together, and it is held down itself.\n\n" +
+                        "Whisper its name to the chamber if you seek the path onward."
         );
         chamberOfEchoes.addItem(this.note);
         crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
@@ -422,8 +423,8 @@ public class ZorkULGame {
         }
 
 
-        player.setCurrentRoom(nextRoom);
-        print(player.getCurrentRoom().getLongDescription());
+       player.setCurrentRoom(nextRoom);
+     //   print(player.getCurrentRoom().getLongDescription());
     }
 
     public String getCurrentRoomDescription() {
@@ -467,11 +468,6 @@ public class ZorkULGame {
 
                 // print to console
                 print(dialogue);
-
-                // print to GUI
-                if (outputArea != null)
-                    outputArea.appendText(dialogue + "\n");
-
                 return;
             }
         }
@@ -614,9 +610,10 @@ public class ZorkULGame {
                                 "Heat and shadow swallow you whole.\n\n" +
                                 "*** YOU HAVE LOST ***"
                 );
-
-                Platform.runLater(Platform::exit);
+                if (onGameLose != null) onGameLose.run();
+                scheduleExit();
                 return;
+
             }
         }
     }
@@ -626,6 +623,13 @@ public class ZorkULGame {
             Platform.runLater(() -> outputArea.appendText(text + "\n"));
         }
     }
+
+    private Runnable onGameLose;
+
+    public void setOnGameLose(Runnable r) {
+        this.onGameLose = r;
+    }
+
 
     private void scheduleExit() {
         javafx.application.Platform.runLater(() -> {

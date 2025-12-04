@@ -51,6 +51,8 @@ public class ZorkGUI extends Application {
 
         game = new ZorkULGame(outputArea);
         game.setOnGameWin(() -> playSound("win.mp3"));
+        game.setOnGameLose(() -> playSound("lose.mp3"));
+
 
         BorderPane root = new BorderPane();
 
