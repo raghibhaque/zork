@@ -172,7 +172,6 @@ public class ZorkULGame {
                         "Whisper its name to the chamber if you seek the path onward."
         );
         chamberOfEchoes.addItem(this.note);
-        crucible.addItem(new Item("Flame Core", "A burning orb of blue fire. Its warmth feels... wrong."));
         registerRooms();
 
         NPC Acheron = new NPC("Acheron", vaultOfChains,
@@ -770,7 +769,6 @@ public class ZorkULGame {
         }
 
         String roomName = command.getSecondWord().toLowerCase();
-
         Room target = roomMap.get(roomName);
 
         if (target == null) {
@@ -779,8 +777,7 @@ public class ZorkULGame {
         }
 
         player.setCurrentRoom(target);
-        print("You teleport to:");
-        print(target.getLongDescription());
+        print("You teleport to " + roomName + ".");
     }
 
     private void useItem(Command command) {
